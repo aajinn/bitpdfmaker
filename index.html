@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <title>PDF OCR Text Extractor</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+</head>
+
+<body class="p-4">
+        <input type="file" id="pdf-upload" accept="application/pdf" />
+        <div id="progress" class="mt-2 text-blue-600 font-semibold"></div>
+        <pre id="output" class="mt-4 whitespace-pre-wrap"></pre>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+        <script src="https://unpkg.com/tesseract.js@5.0.3/dist/tesseract.min.js"></script>
+        <script>
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+                const input = document.getElementById('pdf-upload');
+                const output = document.getElementById('output');
+                const progress = document.getElementById('progress');
+
+                input.addEventListener('change', async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        const fileReader = new FileReader();
+                        fileReader.onload = async function () {
+                                const typedarray = new Uint8Array(this.result);
+                                const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+                                let fullText = '';
+
+                                for (let i = 1; i <= pdf.numPages; i++) {
+                                        progress.textContent = `Processing page ${i} of ${pdf.numPages}...`;
+
+                                        const page = await pdf.getPage(i);
+                                        const viewport = page.getViewport({ scale: 2 });
+                                        const canvas = document.createElement('canvas');
+                                        const context = canvas.getContext('2d');
+                                        canvas.height = viewport.height;
+                                        canvas.width = viewport.width;
+
+                                        await page.render({ canvasContext: context, viewport: viewport }).promise;
+                                        const dataUrl = canvas.toDataURL();
+
+                                        const result = await Tesseract.recognize(dataUrl, 'eng', {
+                                                logger: m => {
+                                                        if (m.status === 'recognizing text') {
+                                                                progress.textContent = `Page ${i}/${pdf.numPages} - ${Math.round(m.progress * 100)}% OCR`;
+                                                        }
+                                                }
+                                        });
+
+                                        fullText += result.data.text + ' ';
+                                }
+
+                                const cleanedText = fullText
+                                        .replace(/\s+/g, ' ')
+                                        .replace(/\s*\.\s*/g, '. ')
+                                        .trim();
+
+                                progress.textContent = 'Done!';
+                                output.textContent = cleanedText;
+                        };
+
+                        fileReader.readAsArrayBuffer(file);
+                });
+        </script>
+</body>
+
+</html>
