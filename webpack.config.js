@@ -22,7 +22,7 @@ module.exports = {
                 new CopyWebpackPlugin({
                         patterns: [
                                 { from: './*.html', to: '[name][ext]' },
-                                { from: './public', to: '' }
+                                { from: './public', to: './public' }
                         ],
                 }),
         ],
