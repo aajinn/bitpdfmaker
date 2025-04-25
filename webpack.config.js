@@ -21,7 +21,8 @@ module.exports = {
         plugins: [
                 new CopyWebpackPlugin({
                         patterns: [
-                                { from: './*.html', to: '[name][ext]' }, // Copies all .html files from src/ to dist/
+                                { from: './*.html', to: '[name][ext]' },
+                                { from: './public', to: '' }
                         ],
                 }),
         ],
