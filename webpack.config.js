@@ -2,7 +2,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-        entry: './src/script.js', // Replace with your JS file path
+        entry: './src/bundle.js', // Replace with your JS file path
         output: {
                 filename: './src/bundle.js', // Output file
                 path: path.resolve(__dirname, 'dist'), // Output directory
