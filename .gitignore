@@ -1,0 +1,40 @@
+# Node modules
+/node_modules/
+
+# Build output
+/dist/
+*.bundle.js
+*.min.js
+*.js.map
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store        # macOS
+Thumbs.db        # Windows
+
+# IDE/Editor settings
+.vscode/
+.idea/
+
+# npm debug file
+npm-debug.log*
+
+# Yarn lock file (if using Yarn instead of npm)
+yarn-debug.log*
+yarn-error.log*
+
+# .env files for sensitive environment variables
+.env.local
+.env.*.local
+
+# If you use Webpack and output files are generated in the `build/` directory
+/build/
+
+# Other file types you may want to exclude
+*.bak
+*.swp

@@ -2,10 +2,36 @@
 <html lang="en">
 
 <head>
-     <meta charset="UTF-8" />
-     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-     <title>PDF OCR Editor & Exporter</title>
-     <script src="https://cdn.tailwindcss.com"></script>
+
+     <head>
+          <title>BitPDFMaker - PDF Note Extractor & Cheat Sheet Generator</title>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta name="description"
+               content="Convert PDFs into compact cheat-ready sheets by extracting key notes and placing them into small boxes. Download your customized exam-ready PDF instantly." />
+          <meta name="keywords"
+               content="BitPDFMaker, PDF cheat tool, extract notes, cheat sheet generator, small text PDF, exam notes, micro PDF, compressed notes, study hacks" />
+          <meta name="author" content="bitpdfmaker.pro" />
+          <meta property="og:title" content="BitPDFMaker - Generate Cheat Sheets from Any PDF" />
+          <meta property="og:description"
+               content="Extract notes from your PDF and insert them into tiny boxes. Perfect for exams. Download cheat-optimized PDFs fast and free." />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://bitpdfmaker.pro" />
+          <meta property="og:image" content="https://bitpdfmaker.pro/og-image.jpg" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="BitPDFMaker - Extract & Insert Notes in PDF" />
+          <meta name="twitter:description"
+               content="Smartly convert PDFs into cheat-ready formats with mini note inserts. Quick and downloadable." />
+          <meta name="twitter:image" content="https://bitpdfmaker.pro/twitter-image.jpg" />
+          <link rel="icon" href="public/favicon.ico" />\
+          <link rel="apple-touch-icon" sizes="180x180" href="public/apple-touch-icon.png">
+          <link rel="icon" type="image/png" sizes="32x32" href="public/favicon-32x32.png">
+          <link rel="icon" type="image/png" sizes="16x16" href="public/favicon-16x16.png">
+          <link rel="manifest" href="public/site.webmanifest">
+     </head>
+
+     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
      <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js"></script>
      <script src="https://unpkg.com/tesseract.js@5.0.3/dist/tesseract.min.js"></script>
@@ -34,8 +60,15 @@
 
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start p-3 md:p-6">
      <header class="w-full max-w-5xl mb-4 md:mb-6">
-          <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800">
-               PDF OCR Editor & Exporter
+          <h1 class="text-2xl md:text-3xl font-bold text-center text-yellow-400">
+               <span class="text-green-500">Bit</span>Maker<span class="text-red-600">Pdf</span>
+               <nav class="space-x-4 text-gray-800">
+                    <a href="index.html" class="hover:underline">Home</a>
+                    <a href="about.html" class="hover:underline">About</a>
+                    <a href="privacy.html" class="hover:underline">Privacy</a>
+                    <a href="terms.html" class="hover:underline">Terms</a>
+                    <a href="contact.html" class="hover:underline">Contact</a>
+               </nav>
           </h1>
      </header>
 
@@ -180,13 +213,45 @@
           </div>
 
           <div id="grid" class="grid gap-3 mb-6"></div>
-     </main>
 
-     <footer class="w-full max-w-5xl mt-4 text-center text-gray-500 text-sm">
-          <p>PDF OCR Editor & Exporter by BitMakerPdf.pro</p>
-     </footer>
+          <main class="container mx-auto p-6">
+               <section class="mb-10">
+                    <h2 class="text-3xl font-bold mb-4">Extract & Embed Notes Into PDF</h2>
+                    <p class="text-lg mb-6">BitPDFMaker is your one-stop tool to extract key points, summaries, and
+                         micro notes from PDF documents and place them smartly into small square blocks inside the same
+                         PDF. Perfect for quick revision or compressed overviews.</p>
 
-     <script src="script.js"></script>
+               </section>
+
+               <section class="mb-10">
+                    <h3 class="text-2xl font-semibold mb-2">Why Use BitPDFMaker?</h3>
+                    <ul class="list-disc pl-5 text-base">
+                         <li>Convert long documents into bite-sized note PDFs</li>
+                         <li>Insert square-shaped notes directly into your PDF</li>
+                         <li>Quick download for offline usage</li>
+                         <li>Completely private - nothing is stored</li>
+                    </ul>
+               </section>
+
+               <section>
+                    <h3 class="text-2xl font-semibold mb-4">How It Works</h3>
+                    <ol class="list-decimal pl-5 text-base space-y-2">
+                         <li>Upload your PDF document using the tool above.</li>
+                         <li>Our tool scans and extracts key content such as headings, bullet points, and definitions.
+                         </li>
+                         <li>Notes are automatically compressed into small readable square boxes.</li>
+                         <li>You download a new PDF with those embedded blocks ready for printing or revision.</li>
+                    </ol>
+               </section>
+          </main>
+
+          <footer class="w-full max-w-5xl mt-4 text-center text-gray-500 text-sm">
+               <footer class="bg-white text-center text-sm py-4 mt-10 border-t">
+                    &copy; 2025 BitPDFMaker
+               </footer>
+          </footer>
+
+          <script src="src/script.js"></script>
 </body>
 
 </html>
