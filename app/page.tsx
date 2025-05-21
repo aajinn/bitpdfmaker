@@ -1,188 +1,371 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "./component/Header";
 
+// Define proper types for the libraries
+interface PDFLib {
+     [x: string]: any;
+     getDocument: (params: { data: Uint8Array }) => { promise: PDFDocument };
+}
+
+interface PDFDocument {
+     numPages: number;
+     getPage: (pageNum: number) => Promise<PDFPage>;
+}
+
+interface PDFPage {
+     getViewport: (params: { scale: number }) => PDFViewport;
+     render: (params: {
+          canvasContext: CanvasRenderingContext2D;
+          viewport: PDFViewport;
+     }) => { promise: Promise<void> };
+}
+
+interface PDFViewport {
+     width: number;
+     height: number;
+}
+
+interface TesseractLib {
+     recognize: (
+          image: string,
+          lang: string,
+          options: {
+               logger: (m: TesseractProgress) => void;
+          }
+     ) => Promise<TesseractResult>;
+}
+
+interface TesseractProgress {
+     status: string;
+     progress: number;
+}
+
+interface TesseractResult {
+     data: {
+          text: string;
+     };
+}
+
+interface JSPDF {
+     jsPDF: new (options: { unit: string; format: string }) => JSPDFInstance;
+}
+
+interface JSPDFInstance {
+     setFontSize: (size: number) => void;
+     setFont: (font: string, style: string) => void;
+     text: (
+          text: string,
+          x: number,
+          y: number,
+          options: { maxWidth: number }
+     ) => void;
+     addPage: () => void;
+     save: (filename: string) => void;
+}
+
+// Add this type to handle the global window object
+interface WindowWithLibs extends Window {
+     pdfjsLib?: PDFLib;
+     Tesseract?: TesseractLib;
+     jspdf?: JSPDF;
+}
+
+declare const window: WindowWithLibs;
+
 export default function Page() {
-     const [text, setText] = useState("");
+     const [text, setText] = useState<string>("");
      const [cells, setCells] = useState<string[]>([]);
-     const [fontSize, setFontSize] = useState(8);
-     const pdfjsRef = useRef<any>(null);
-     const TesseractRef = useRef<any>(null);
-     const jsPDFRef = useRef<any>(null);
-     const [loading, setLoading] = useState(false);
-     const [error, setError] = useState("");
-     const [progress, setProgress] = useState("");
+     const [fontSize, setFontSize] = useState<number>(8);
+     const pdfjsRef = useRef<PDFLib | null>(null);
+     const TesseractRef = useRef<TesseractLib | null>(null);
+     const jsPDFRef = useRef<JSPDF | null>(null);
+     const [loading, setLoading] = useState<boolean>(false);
+     const [error, setError] = useState<string>("");
+     const [progress, setProgress] = useState<string>("");
 
      const rows = 5;
      const cols = 3;
 
+     // Load external scripts
      useEffect(() => {
-          const pdfScript = document.createElement("script");
-          pdfScript.src =
-               "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js";
-          pdfScript.async = true;
-          pdfScript.onload = () => {
-               (window as any)["pdfjsLib"].GlobalWorkerOptions.workerSrc =
-                    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
-
-               (pdfjsRef.current as any) = (window as any)["pdfjsLib"];
+          const loadScript = (url: string, onLoad: () => void) => {
+               const script = document.createElement("script");
+               script.src = url;
+               script.async = true;
+               script.onload = onLoad;
+               document.body.appendChild(script);
+               return script;
           };
-          document.body.appendChild(pdfScript);
 
-          const tessScript = document.createElement("script");
-          tessScript.src =
-               "https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js";
-          tessScript.async = true;
-          tessScript.onload = () => {
-               (TesseractRef.current as any) = (window as any)["Tesseract"];
-          };
-          document.body.appendChild(tessScript);
+          const scripts: HTMLScriptElement[] = [];
 
-          const jsPDFScript = document.createElement("script");
-          jsPDFScript.src =
-               "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
-          jsPDFScript.async = true;
-          jsPDFScript.onload = () => {
-               (jsPDFRef.current as any) = (window as any)["jspdf"];
+          // Load PDF.js
+          scripts.push(
+               loadScript(
+                    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js",
+                    () => {
+                         if (window.pdfjsLib) {
+                              window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+                                   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
+                              pdfjsRef.current = window.pdfjsLib;
+                         }
+                    }
+               )
+          );
+
+          // Load Tesseract.js
+          scripts.push(
+               loadScript(
+                    "https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js",
+                    () => {
+                         if (window.Tesseract) {
+                              TesseractRef.current = window.Tesseract;
+                         }
+                    }
+               )
+          );
+
+          // Load jsPDF
+          scripts.push(
+               loadScript(
+                    "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+                    () => {
+                         if (window.jspdf) {
+                              jsPDFRef.current = window.jspdf;
+                         }
+                    }
+               )
+          );
+
+          // Cleanup function to remove scripts when component unmounts
+          return () => {
+               scripts.forEach((script) => {
+                    if (document.body.contains(script)) {
+                         document.body.removeChild(script);
+                    }
+               });
           };
-          document.body.appendChild(jsPDFScript);
      }, []);
 
-     async function extractText(file: File) {
-          if (!pdfjsRef.current || !TesseractRef.current) {
-               setError("Libraries not loaded yet, please try again shortly.");
-               return;
-          }
-          setError("");
-          setLoading(true);
-          setText("");
-          setCells([]);
-          setProgress("Starting PDF processing...");
+     // Generate cells for PDF layout
+     const generateCells = useCallback(
+          (textParam?: string) => {
+               const sourceText = textParam ?? text;
+               if (!sourceText) return;
 
-          try {
-               const reader = new FileReader();
-               reader.onload = async () => {
-                    const typedArray = new Uint8Array(
-                         reader.result as ArrayBuffer
-                    );
-                    const pdf = await pdfjsRef.current.getDocument({
-                         data: typedArray,
-                    }).promise;
+               const sentences =
+                    sourceText.match(/[^\.!\?]+[\.!\?]+|[^\.!\?]+$/g) || [];
+               const totalCells = rows * cols;
 
-                    let fullText = "";
-                    for (let i = 1; i <= pdf.numPages; i++) {
-                         setProgress(
-                              `Rendering page ${i} of ${pdf.numPages}...`
-                         );
-                         const page = await pdf.getPage(i);
-                         const viewport = page.getViewport({ scale: 2 });
-                         const canvas = document.createElement("canvas");
-                         const ctx = canvas.getContext("2d")!;
-                         canvas.width = viewport.width;
-                         canvas.height = viewport.height;
-                         await page.render({ canvasContext: ctx, viewport })
-                              .promise;
-                         const dataUrl = canvas.toDataURL();
+               const margin = 10;
+               const pageWidth = 210 - margin * 2;
+               const pageHeight = 297 - margin * 2;
+               const cellWidthMM = pageWidth / cols;
+               const cellHeightMM = pageHeight / rows;
 
-                         setProgress(`Performing OCR on page ${i}...`);
-                         const result = await TesseractRef.current.recognize(
-                              dataUrl,
-                              "eng",
-                              {
-                                   logger: (m: any) => {
-                                        if (m.status === "recognizing text") {
-                                             setProgress(
-                                                  `OCR progress on page ${i}: ${(
-                                                       m.progress * 100
-                                                  ).toFixed(1)}%`
-                                             );
-                                        }
-                                   },
-                              }
-                         );
-                         fullText += result.data.text + " ";
+               const approxCharsPerLine = Math.floor(cellWidthMM / 0.5);
+               const lineHeightMM = fontSize * 0.35;
+               const approxLinesPerCell = Math.floor(
+                    cellHeightMM / lineHeightMM
+               );
+               const maxCharsPerCell = approxCharsPerLine * approxLinesPerCell;
+
+               const tempCells: string[] = [];
+               let currentCell = "";
+
+               for (const sentence of sentences) {
+                    if (
+                         (currentCell + sentence).length <= maxCharsPerCell ||
+                         currentCell === ""
+                    ) {
+                         currentCell += sentence + " ";
+                    } else {
+                         tempCells.push(currentCell.trim());
+                         currentCell = sentence + " ";
                     }
-                    setProgress("Finalizing text extraction...");
-                    const cleanText = fullText.trim().replace(/\s+/g, " ");
-                    setText(cleanText);
-                    generateCells(cleanText);
-                    setProgress("Text extraction completed!");
-                    setLoading(false);
-               };
-               reader.readAsArrayBuffer(file);
-          } catch {
-               setError("Failed to extract text from PDF.");
-               setLoading(false);
-               setProgress("");
-          }
-     }
-
-     function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-          const file = e.target.files?.[0];
-          if (!file) return;
-          if (file.type !== "application/pdf") {
-               setError("Please upload a valid PDF file.");
-               return;
-          }
-          // Clear old progress and data when new PDF is uploaded
-          setProgress("");
-          setError("");
-          setLoading(false);
-          setText("");
-          setCells([]);
-          extractText(file);
-     }
-
-     function generateCells(textParam?: string) {
-          const sourceText = textParam ?? text;
-          if (!sourceText) return;
-
-          const sentences =
-               sourceText.match(/[^\.!\?]+[\.!\?]+|[^\.!\?]+$/g) || [];
-          const totalCells = rows * cols;
-
-          const margin = 10;
-          const pageWidth = 210 - margin * 2;
-          const pageHeight = 297 - margin * 2;
-          const cellWidthMM = pageWidth / cols;
-          const cellHeightMM = pageHeight / rows;
-
-          const approxCharsPerLine = Math.floor(cellWidthMM / 0.5);
-          const lineHeightMM = fontSize * 0.35;
-          const approxLinesPerCell = Math.floor(cellHeightMM / lineHeightMM);
-          const maxCharsPerCell = approxCharsPerLine * approxLinesPerCell;
-
-          const tempCells: string[] = [];
-          let currentCell = "";
-
-          for (const sentence of sentences) {
-               if (
-                    (currentCell + sentence).length <= maxCharsPerCell ||
-                    currentCell === ""
-               ) {
-                    currentCell += sentence + " ";
-               } else {
-                    tempCells.push(currentCell.trim());
-                    currentCell = sentence + " ";
                }
-          }
-          if (currentCell.trim() !== "") tempCells.push(currentCell.trim());
 
-          while (tempCells.length > totalCells) {
-               const last = tempCells.pop()!;
-               tempCells[tempCells.length - 1] += " " + last;
-          }
+               if (currentCell.trim() !== "") {
+                    tempCells.push(currentCell.trim());
+               }
 
-          while (tempCells.length < totalCells) {
-               tempCells.push("");
-          }
+               // Ensure we don't exceed the total number of cells
+               while (tempCells.length > totalCells) {
+                    const last = tempCells.pop()!;
+                    tempCells[tempCells.length - 1] += " " + last;
+               }
 
-          setCells(tempCells);
-     }
+               // Fill any empty cells
+               while (tempCells.length < totalCells) {
+                    tempCells.push("");
+               }
 
-     function downloadPDF() {
+               setCells(tempCells);
+          },
+          [text, fontSize, rows, cols]
+     );
+
+     // Extract text from PDF
+     const extractText = useCallback(
+          async (file: File) => {
+               if (!pdfjsRef.current || !TesseractRef.current) {
+                    setError(
+                         "Libraries not loaded yet, please try again shortly."
+                    );
+                    return;
+               }
+
+               setError("");
+               setLoading(true);
+               setText("");
+               setCells([]);
+               setProgress("Starting PDF processing...");
+
+               try {
+                    const reader = new FileReader();
+
+                    reader.onload = async () => {
+                         try {
+                              const typedArray = new Uint8Array(
+                                   reader.result as ArrayBuffer
+                              );
+
+                              // Store in local variables to satisfy TypeScript null checks
+                              const pdfjsLib = pdfjsRef.current;
+                              const tesseractLib = TesseractRef.current;
+
+                              if (!pdfjsLib || !tesseractLib) {
+                                   throw new Error("Libraries not available");
+                              }
+
+                              const pdf = await pdfjsLib.getDocument({
+                                   data: typedArray,
+                              }).promise;
+                              let fullText = "";
+
+                              for (let i = 1; i <= pdf.numPages; i++) {
+                                   setProgress(
+                                        `Rendering page ${i} of ${pdf.numPages}...`
+                                   );
+
+                                   const page = await pdf.getPage(i);
+                                   const viewport = page.getViewport({
+                                        scale: 2,
+                                   });
+                                   const canvas =
+                                        document.createElement("canvas");
+                                   const ctx = canvas.getContext("2d");
+
+                                   if (!ctx) {
+                                        throw new Error(
+                                             "Could not create canvas context"
+                                        );
+                                   }
+
+                                   canvas.width = viewport.width;
+                                   canvas.height = viewport.height;
+
+                                   await page.render({
+                                        canvasContext: ctx,
+                                        viewport,
+                                   }).promise;
+                                   const dataUrl = canvas.toDataURL();
+
+                                   setProgress(
+                                        `Performing OCR on page ${i}...`
+                                   );
+
+                                   const result = await tesseractLib.recognize(
+                                        dataUrl,
+                                        "eng",
+                                        {
+                                             logger: (m: TesseractProgress) => {
+                                                  if (
+                                                       m.status ===
+                                                       "recognizing text"
+                                                  ) {
+                                                       setProgress(
+                                                            `OCR progress on page ${i}: ${(
+                                                                 m.progress *
+                                                                 100
+                                                            ).toFixed(1)}%`
+                                                       );
+                                                  }
+                                             },
+                                        }
+                                   );
+
+                                   fullText += result.data.text + " ";
+                              }
+
+                              setProgress("Finalizing text extraction...");
+                              const cleanText = fullText
+                                   .trim()
+                                   .replace(/\s+/g, " ");
+                              setText(cleanText);
+                              generateCells(cleanText);
+                              setProgress("Text extraction completed!");
+                         } catch (err) {
+                              console.error("PDF processing error:", err);
+                              setError(
+                                   "Failed to process PDF. " +
+                                        (err instanceof Error
+                                             ? err.message
+                                             : "")
+                              );
+                         } finally {
+                              setLoading(false);
+                         }
+                    };
+
+                    reader.onerror = () => {
+                         setError("Failed to read the file");
+                         setLoading(false);
+                    };
+
+                    reader.readAsArrayBuffer(file);
+               } catch (err) {
+                    console.error("Extract text error:", err);
+                    setError("Failed to extract text from PDF.");
+                    setLoading(false);
+                    setProgress("");
+               }
+          },
+          [generateCells]
+     );
+
+     // Handle PDF upload
+     const handleUpload = useCallback(
+          (e: React.ChangeEvent<HTMLInputElement>) => {
+               const file = e.target.files?.[0];
+               if (!file) return;
+
+               if (file.type !== "application/pdf") {
+                    setError("Please upload a valid PDF file.");
+                    return;
+               }
+
+               // Clear old progress and data when new PDF is uploaded
+               setProgress("");
+               setError("");
+               setLoading(false);
+               setText("");
+               setCells([]);
+
+               extractText(file);
+          },
+          [extractText]
+     );
+
+     // Download the formatted PDF
+     const downloadPDF = useCallback(() => {
           if (!jsPDFRef.current || cells.length === 0) return;
-          const { jsPDF } = jsPDFRef.current;
+
+          // Store in a local variable to satisfy TypeScript null checks
+          const jspdfLib = jsPDFRef.current;
+          const { jsPDF } = jspdfLib;
+
           const doc = new jsPDF({ unit: "mm", format: "a4" });
           doc.setFontSize(fontSize);
           doc.setFont("helvetica", "normal");
@@ -213,11 +396,12 @@ export default function Page() {
           });
 
           doc.save("BitMakerPdf-output.pdf");
-     }
+     }, [cells, fontSize, rows, cols]);
 
+     // Update cells when font size changes
      useEffect(() => {
           if (text) generateCells();
-     }, [fontSize]);
+     }, [fontSize, text, generateCells]);
 
      return (
           <main className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-cyan-100 font-sans flex flex-col">
@@ -335,7 +519,7 @@ export default function Page() {
                                                        )
                                                   }
                                                   className="w-full sm:w-64 h-6 bg-indigo-200 rounded-lg appearance-none cursor-pointer
-               accent-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                                        accent-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                                              />
                                              <span className="text-sm font-semibold text-indigo-700">
                                                   Font Size: {fontSize}pt
@@ -346,7 +530,7 @@ export default function Page() {
                                    <button
                                         onClick={downloadPDF}
                                         className="w-full bg-indigo-700 text-white py-3 rounded-xl font-bold
-              hover:bg-indigo-800 active:bg-indigo-900 transition shadow-lg select-none"
+                                hover:bg-indigo-800 active:bg-indigo-900 transition shadow-lg select-none"
                                    >
                                         Download Formatted PDF
                                    </button>
@@ -374,9 +558,9 @@ export default function Page() {
                                                             fontSize + "pt",
                                                   }}
                                                   className="resize-none rounded-lg border border-indigo-300 p-4
-                  shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400
-                  placeholder-indigo-300 min-h-[120px] max-h-[160px] overflow-auto
-                  w-full bg-indigo-50 text-indigo-900"
+                                        shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400
+                                        placeholder-indigo-300 min-h-[120px] max-h-[160px] overflow-auto
+                                        w-full bg-indigo-50 text-indigo-900"
                                                   spellCheck={false}
                                                   aria-label={`Text cell ${
                                                        i + 1
@@ -396,3 +580,5 @@ export default function Page() {
           </main>
      );
 }
+
+// Note: For layout.tsx, remove the unused Link import
