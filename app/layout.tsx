@@ -1,7 +1,4 @@
-import type { Metadata } from "next";
-
 import "./globals.css";
-
 export const metadata = {
      title: "BitPDFMaker - PDF Note Extractor & Cheat Sheet Generator",
      description:
