@@ -27,7 +27,7 @@ export default function Page() {
                // @ts-ignore
                window["pdfjsLib"].GlobalWorkerOptions.workerSrc =
                     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
-               pdfjsRef.current = window["pdfjsLib"];
+               (pdfjsRef.current as any) = (window as any)["pdfjsLib"];
           };
           document.body.appendChild(pdfScript);
 
@@ -36,7 +36,7 @@ export default function Page() {
                "https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js";
           tessScript.async = true;
           tessScript.onload = () => {
-               TesseractRef.current = window["Tesseract"];
+               (TesseractRef.current as any) = (window as any)["Tesseract"];
           };
           document.body.appendChild(tessScript);
 
@@ -45,7 +45,7 @@ export default function Page() {
                "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
           jsPDFScript.async = true;
           jsPDFScript.onload = () => {
-               jsPDFRef.current = window["jspdf"];
+               (jsPDFRef.current as any) = (window as any)["jspdf"];
           };
           document.body.appendChild(jsPDFScript);
      }, []);
