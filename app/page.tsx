@@ -22,9 +22,9 @@ export default function Page() {
                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js";
           pdfScript.async = true;
           pdfScript.onload = () => {
-               // @ts-expect-error
-               window["pdfjsLib"].GlobalWorkerOptions.workerSrc =
+               (window as any)["pdfjsLib"].GlobalWorkerOptions.workerSrc =
                     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
+
                (pdfjsRef.current as any) = (window as any)["pdfjsLib"];
           };
           document.body.appendChild(pdfScript);
@@ -389,7 +389,7 @@ export default function Page() {
                     </div>
                </section>
 
-               <footer className="bg-indigo-900 text-white py-6 text-center select-none">
+               <footer className="text-bg-indigo-400 py-6 text-center select-none">
                     &copy; {new Date().getFullYear()} BitMakerPdf. All rights
                     reserved.
                </footer>
