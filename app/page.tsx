@@ -1,6 +1,4 @@
 "use client";
-
-import Head from "next/head";
 import { useState, useEffect, useRef } from "react";
 import Header from "./component/Header";
 
@@ -24,7 +22,7 @@ export default function Page() {
                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js";
           pdfScript.async = true;
           pdfScript.onload = () => {
-               // @ts-ignore
+               // @ts-expect-error
                window["pdfjsLib"].GlobalWorkerOptions.workerSrc =
                     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
                (pdfjsRef.current as any) = (window as any)["pdfjsLib"];
