@@ -4,8 +4,10 @@ import Header from "./component/Header";
 
 // Define proper types for the libraries
 interface PDFLib {
-     [x: string]: any;
      getDocument: (params: { data: Uint8Array }) => { promise: PDFDocument };
+     GlobalWorkerOptions: {
+          workerSrc: string;
+     };
 }
 
 interface PDFDocument {
@@ -310,9 +312,9 @@ export default function Page() {
                               console.error("PDF processing error:", err);
                               setError(
                                    "Failed to process PDF. " +
-                                        (err instanceof Error
-                                             ? err.message
-                                             : "")
+                                   (err instanceof Error
+                                        ? err.message
+                                        : "")
                               );
                          } finally {
                               setLoading(false);
@@ -562,9 +564,8 @@ export default function Page() {
                                         placeholder-indigo-300 min-h-[120px] max-h-[160px] overflow-auto
                                         w-full bg-indigo-50 text-indigo-900"
                                                   spellCheck={false}
-                                                  aria-label={`Text cell ${
-                                                       i + 1
-                                                  }`}
+                                                  aria-label={`Text cell ${i + 1
+                                                       }`}
                                              />
                                         ))}
                                    </div>
