@@ -1,0 +1,21 @@
+import fs from 'fs'
+import path from 'path'
+import { compileMDX } from 'next-mdx-remote/rsc'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+        title: 'Terms and Conditions | BitPDFMaker',
+        description: 'Review the terms and conditions for using BitPDFMaker responsibly and ethically.',
+}
+
+export default async function Terms() {
+        const filePath = path.join(process.cwd(), 'app/(pages)/(content)', 'terms.mdx')
+        const fileContent = fs.readFileSync(filePath, 'utf8')
+
+        const { content } = await compileMDX({
+                source: fileContent,
+                options: { parseFrontmatter: true }
+        })
+
+        return <div className="container mx-auto py-12">{content}</div>
+}
