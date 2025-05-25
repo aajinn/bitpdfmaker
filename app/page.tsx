@@ -18,65 +18,11 @@ export default function Page() {
      const rows = 5;
      const cols = 3;
 
-     // Load external scripts
+     // Initialize refs with global libraries
      useEffect(() => {
-          const loadScript = (url: string, onLoad: () => void) => {
-               const script = document.createElement("script");
-               script.src = url;
-               script.async = true;
-               script.onload = onLoad;
-               document.body.appendChild(script);
-               return script;
-          };
-
-          const scripts: HTMLScriptElement[] = [];
-
-          // Load PDF.js
-          scripts.push(
-               loadScript(
-                    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js",
-                    () => {
-                         if (window.pdfjsLib) {
-                              window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-                                   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
-                              pdfjsRef.current = window.pdfjsLib;
-                         }
-                    }
-               )
-          );
-
-          // Load Tesseract.js
-          scripts.push(
-               loadScript(
-                    "https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js",
-                    () => {
-                         if (window.Tesseract) {
-                              TesseractRef.current = window.Tesseract;
-                         }
-                    }
-               )
-          );
-
-          // Load jsPDF
-          scripts.push(
-               loadScript(
-                    "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
-                    () => {
-                         if (window.jspdf) {
-                              jsPDFRef.current = window.jspdf;
-                         }
-                    }
-               )
-          );
-
-          // Cleanup function to remove scripts when component unmounts
-          return () => {
-               scripts.forEach((script) => {
-                    if (document.body.contains(script)) {
-                         document.body.removeChild(script);
-                    }
-               });
-          };
+          if (window.pdfjsLib) pdfjsRef.current = window.pdfjsLib;
+          if (window.Tesseract) TesseractRef.current = window.Tesseract;
+          if (window.jspdf) jsPDFRef.current = window.jspdf;
      }, []);
 
      // Generate cells for PDF layout
