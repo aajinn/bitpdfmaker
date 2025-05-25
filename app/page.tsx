@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import Header from "./component/Header";
+import Header from "./components/Header";
 
 declare const window: WindowWithLibs;
 
