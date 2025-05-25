@@ -1,4 +1,6 @@
 import "./globals.css";
+import ExternalScripts from "./components/ExternalScripts";
+
 export const metadata = {
      title: "BitPDFMaker - PDF Note Extractor & Cheat Sheet Generator",
      description:
@@ -12,7 +14,10 @@ export default function RootLayout({
 }>) {
      return (
           <html lang="en">
-               <body>{children}</body>
+               <body>
+                    <ExternalScripts />
+                    {children}
+               </body>
           </html>
      );
 }
