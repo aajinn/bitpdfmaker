@@ -284,172 +284,124 @@ export default function Page() {
           <main className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-cyan-100 font-sans flex flex-col">
                <Header />
 
-               <section className="flex-grow flex flex-col items-center p-4 sm:p-6">
-                    <main className="max-w-4xl w-full mb-8 text-center px-4 sm:px-0">
-                         <p className="max-w-xl mx-auto text-2xl sm:text-3xl font-extrabold leading-tight text-gray-900 dark:text-white">
-                              <span className="bg-gradient-to-r from-indigo-600 via-purple-700 to-pink-600 bg-clip-text text-transparent">
-                                   🚀 Unlock the full potential of your PDFs
-                              </span>{" "}
-                              with{" "}
-                              <span className="text-indigo-700">
-                                   🤖 seamless AI-powered OCR
-                              </span>{" "}
-                              and
-                              <span className="text-pink-600">
-                                   {" "}
-                                   🎨 advanced layout automation
-                              </span>
-                              . Effortlessly extract, edit, and reformat text —
-                              no technical skills required.
-                              <br />
-                              <strong className="text-indigo-800">
-                                   📤 Upload
-                              </strong>
-                              , customize font size,
-                              <strong className="text-indigo-800">
-                                   {" "}
-                                   🔍 preview
-                              </strong>
-                              , and
-                              <strong className="text-indigo-800">
-                                   {" "}
-                                   💾 download
-                              </strong>{" "}
-                              beautifully formatted PDFs in seconds.
-                         </p>
-                    </main>
+               <section className="flex-grow flex flex-col items-center p-2 sm:p-6">
+                    <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-3 sm:p-8 flex flex-col gap-3 sm:gap-6 border border-indigo-200">
+                         {/* File Upload */}
+                         <div className="flex flex-col gap-3">
+                              <label
+                                   htmlFor="pdf-upload"
+                                   className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl py-2 sm:py-3 text-center font-semibold text-sm sm:text-base transition shadow-md select-none"
+                                   tabIndex={0}
+                                   onKeyDown={(e) =>
+                                        e.key === "Enter" &&
+                                        document.getElementById("pdf-upload")?.click()
+                                   }
+                              >
+                                   {loading ? "Processing PDF..." : "Upload PDF"}
+                              </label>
+                              <input
+                                   type="file"
+                                   id="pdf-upload"
+                                   accept="application/pdf"
+                                   onChange={handleUpload}
+                                   disabled={loading}
+                                   className="hidden"
+                              />
+                         </div>
 
-                    <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl p-6 sm:p-8 flex flex-col gap-6 border border-indigo-200">
-                         <label
-                              htmlFor="file-upload"
-                              className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl py-3 text-center font-semibold text-base sm:text-lg transition shadow-md select-none"
-                              tabIndex={0}
-                              onKeyDown={(e) =>
-                                   e.key === "Enter" &&
-                                   document
-                                        .getElementById("file-upload")
-                                        ?.click()
-                              }
-                         >
-                              {loading
-                                   ? "Processing PDF..."
-                                   : "Upload PDF to Extract Text"}
-                         </label>
-                         <input
-                              type="file"
-                              id="file-upload"
-                              accept="application/pdf"
-                              onChange={handleUpload}
-                              disabled={loading}
-                              className="hidden"
-                         />
-
+                         {/* Progress and Error Messages */}
+                         {progress && (
+                              <p className="text-center text-indigo-700 font-medium text-sm sm:text-base">
+                                   {progress}
+                              </p>
+                         )}
                          {error && (
-                              <p className="text-center text-red-600 font-semibold select-none">
+                              <p className="text-center text-red-600 font-semibold text-sm sm:text-base">
                                    {error}
                               </p>
                          )}
 
-                         {loading && (
-                              <div className="flex flex-col justify-center items-center space-y-2 select-none">
-                                   <svg
-                                        className="animate-spin h-10 w-10 text-indigo-600"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                   >
-                                        <circle
-                                             className="opacity-25"
-                                             cx="12"
-                                             cy="12"
-                                             r="10"
-                                             stroke="currentColor"
-                                             strokeWidth="4"
-                                        />
-                                        <path
-                                             className="opacity-75"
-                                             fill="currentColor"
-                                             d="M4 12a8 8 0 018-8v8H4z"
-                                        />
-                                   </svg>
-                                   <p className="text-indigo-600 font-semibold text-center px-4">
-                                        {progress}
-                                   </p>
+                         {/* Text Preview */}
+                         {text && (
+                              <div className="flex flex-col gap-3">
+                                   <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+                                        Extracted Text Preview
+                                   </h2>
+                                   <textarea
+                                        value={text}
+                                        onChange={(e) => {
+                                             setText(e.target.value);
+                                             generateCells(e.target.value);
+                                        }}
+                                        className="w-full h-32 sm:h-48 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
+                                        placeholder="Extracted text will appear here..."
+                                   />
                               </div>
                          )}
 
-                         {!loading && cells.length > 0 && (
-                              <>
-                                   <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
-                                        <div className="w-full flex flex-col items-center gap-2">
-                                             <input
-                                                  id="font-size"
-                                                  type="range"
-                                                  min={5}
-                                                  max={20}
-                                                  value={fontSize}
-                                                  onChange={(e) =>
-                                                       setFontSize(
-                                                            Number(
-                                                                 e.target.value
-                                                            )
-                                                       )
-                                                  }
-                                                  className="w-full sm:w-64 h-6 bg-indigo-200 rounded-lg appearance-none cursor-pointer
-                                        accent-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                                             />
-                                             <span className="text-sm font-semibold text-indigo-700">
-                                                  Font Size: {fontSize}pt
-                                             </span>
-                                        </div>
+                         {/* Font Size Control */}
+                         {text && (
+                              <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
+                                   <label className="text-sm sm:text-base text-gray-700">
+                                        Font Size:
+                                   </label>
+                                   <div className="flex items-center gap-2">
+                                        <button
+                                             onClick={() => setFontSize((f) => Math.max(6, f - 1))}
+                                             className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm sm:text-base"
+                                        >
+                                             -
+                                        </button>
+                                        <span className="text-indigo-700 font-semibold text-sm sm:text-base">
+                                             {fontSize}pt
+                                        </span>
+                                        <button
+                                             onClick={() => setFontSize((f) => Math.min(12, f + 1))}
+                                             className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm sm:text-base"
+                                        >
+                                             +
+                                        </button>
                                    </div>
+                              </div>
+                         )}
 
-                                   <button
-                                        onClick={downloadPDF}
-                                        className="w-full bg-indigo-700 text-white py-3 rounded-xl font-bold
-                                hover:bg-indigo-800 active:bg-indigo-900 transition shadow-lg select-none"
-                                   >
-                                        Download Formatted PDF
-                                   </button>
-
-                                   <div
-                                        className="grid gap-4 mt-6"
-                                        style={{
-                                             gridTemplateColumns: `repeat(auto-fit, minmax(220px, 1fr))`,
-                                        }}
-                                   >
-                                        {cells.map((cell, i) => (
-                                             <textarea
-                                                  key={i}
-                                                  value={cell}
-                                                  onChange={(e) => {
-                                                       const newCells = [
-                                                            ...cells,
-                                                       ];
-                                                       newCells[i] =
-                                                            e.target.value;
-                                                       setCells(newCells);
-                                                  }}
-                                                  style={{
-                                                       fontSize:
-                                                            fontSize + "pt",
-                                                  }}
-                                                  className="resize-none rounded-lg border border-indigo-300 p-4
-                                        shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400
-                                        placeholder-indigo-300 min-h-[120px] max-h-[160px] overflow-auto
-                                        w-full bg-indigo-50 text-indigo-900"
-                                                  spellCheck={false}
-                                                  aria-label={`Text cell ${i + 1
-                                                       }`}
-                                             />
+                         {/* Preview Grid */}
+                         {cells.length > 0 && (
+                              <div className="flex flex-col gap-3">
+                                   <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+                                        Preview
+                                   </h2>
+                                   <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                                        {cells.map((cell, index) => (
+                                             <div
+                                                  key={index}
+                                                  className="aspect-[210/297] p-2 sm:p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-hidden"
+                                             >
+                                                  <p
+                                                       className="text-[8pt] leading-tight"
+                                                       style={{ fontSize: `${fontSize}pt` }}
+                                                  >
+                                                       {cell}
+                                                  </p>
+                                             </div>
                                         ))}
                                    </div>
-                              </>
+                              </div>
+                         )}
+
+                         {/* Download Button */}
+                         {cells.length > 0 && (
+                              <button
+                                   onClick={downloadPDF}
+                                   className="w-full sm:w-auto mx-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2 sm:py-3 px-6 sm:px-8 rounded-xl transition shadow-md text-sm sm:text-base"
+                              >
+                                   Download PDF
+                              </button>
                          )}
                     </div>
                </section>
 
-               <footer className="text-bg-indigo-400 py-6 text-center select-none">
+               <footer className="text-bg-indigo-400 py-4 sm:py-6 text-center select-none text-sm sm:text-base">
                     &copy; {new Date().getFullYear()} BitMakerPdf. All rights
                     reserved.
                </footer>
