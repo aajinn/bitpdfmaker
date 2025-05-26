@@ -31,7 +31,6 @@ export const metadata: Metadata = {
           icon: "/favicon.ico",
           apple: "/apple-touch-icon.png",
      },
-     manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
@@ -55,7 +54,7 @@ export default function RootLayout({
                          defer
                     ></script>
                </head>
-               <body className={inter.className} h-full min-h-screen flex flex-col>
+               <body className={`${inter.className} h-full min-h-screen flex flex-col`}>
                     <ExternalScripts />
                     {children}
                </body>
