@@ -83,7 +83,7 @@ export default function PDFViewer() {
                 if (pdfDoc) {
                         renderPage(currentPage);
                 }
-        }, [currentPage, pdfDoc, scale]);
+        }, [currentPage, pdfDoc, scale, renderPage]);
 
         // Cleanup on unmount
         useEffect(() => {
