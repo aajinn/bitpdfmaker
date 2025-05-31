@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "../../components/Header";
 
 declare const window: WindowWithLibs;
@@ -17,7 +17,7 @@ export default function PDFViewer() {
         const containerRef = useRef<HTMLDivElement>(null);
 
         // Render current page
-        const renderPage = async (pageNum: number) => {
+        const renderPage = useCallback(async (pageNum: number) => {
                 if (!pdfDoc || !canvasRef.current) return;
 
                 try {
@@ -42,7 +42,7 @@ export default function PDFViewer() {
                         console.error("Error rendering page:", err);
                         setError("Failed to render page");
                 }
-        };
+        }, [pdfDoc, scale]);
 
         // Handle file upload
         const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
