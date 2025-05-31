@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import Header from "../../components/Header";
 import ExternalScripts from "../../components/ExternalScripts";
-import type { TextItem, PDFDocumentLoadingTask } from "@/types/pdf";
+import type { TextItem, PDFDocumentLoadingTask, TesseractProgress } from "@/types/pdf";
 import Head from "next/head";
 
 export default function ExtractTextFromPDF() {
