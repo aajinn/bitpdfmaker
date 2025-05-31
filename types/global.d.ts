@@ -1,6 +1,8 @@
 // PDF.js related types
+import type { PDFDocumentLoadingTask } from "./pdf";
+
 interface PDFLib {
-    getDocument: (params: { data: Uint8Array }) => Promise<PDFDocument>;
+    getDocument: (params: { data: Uint8Array }) => PDFDocumentLoadingTask;
     GlobalWorkerOptions: {
         workerSrc: string;
     };
