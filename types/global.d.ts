@@ -1,6 +1,6 @@
 // PDF.js related types
 interface PDFLib {
-    getDocument: (params: { data: Uint8Array }) => { promise: PDFDocument };
+    getDocument: (params: { data: Uint8Array }) => Promise<PDFDocument>;
     GlobalWorkerOptions: {
         workerSrc: string;
     };
