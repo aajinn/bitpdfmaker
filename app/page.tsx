@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "./components/Header";
+import ExternalScripts from "./components/ExternalScripts";
+import type { PDFLib, TesseractLib, JSPDF, TesseractProgress } from "@/app/types/window";
 
 declare const window: WindowWithLibs;
 

@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "../../components/Header";
+import type { PDFDocumentProxy } from "@/app/types/window";
 
 declare const window: WindowWithLibs;
 
 export default function PDFViewer() {
-        const [pdfDoc, setPdfDoc] = useState<PDFDocument | null>(null);
+        const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
         const [currentPage, setCurrentPage] = useState(1);
         const [numPages, setNumPages] = useState(0);
         const [scale, setScale] = useState(1.0);
