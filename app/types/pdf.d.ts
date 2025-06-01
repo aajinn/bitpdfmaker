@@ -3,6 +3,7 @@ import { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
 declare global {
     interface Window {
         pdfjsLib: {
+            version: string;
             getDocument: (options: { data: Uint8Array }) => {
                 promise: Promise<{
                     numPages: number;
