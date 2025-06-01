@@ -21,9 +21,6 @@ export default function PDFToImage() {
         const [error, setError] = useState<string | null>(null);
         const [pageImages, setPageImages] = useState<PageImage[]>([]);
         const [selectedPages, setSelectedPages] = useState<number[]>([]);
-        const [imageFormat, setImageFormat] = useState<'image/jpeg' | 'image/png'>('image/jpeg');
-        const [imageQuality, setImageQuality] = useState(0.8);
-        const [imageScale, setImageScale] = useState(2);
         const canvasRef = useRef<HTMLCanvasElement>(null);
 
         const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +41,7 @@ export default function PDFToImage() {
                 const canvas = canvasRef.current;
                 if (!canvas) throw new Error('Canvas not initialized');
 
-                const viewport = page.getViewport({ scale: imageScale });
+                const viewport = page.getViewport({ scale: 2 });
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
 
@@ -56,7 +53,7 @@ export default function PDFToImage() {
                         viewport: viewport
                 }).promise;
 
-                const dataUrl = canvas.toDataURL(imageFormat, imageQuality);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
                 const blob = await (await fetch(dataUrl)).blob();
 
                 return {
@@ -114,7 +111,7 @@ export default function PDFToImage() {
                         for (const pageNumber of selectedPages) {
                                 const image = pageImages.find(img => img.pageNumber === pageNumber);
                                 if (image) {
-                                        zip.file(`page-${pageNumber}.${imageFormat === 'image/jpeg' ? 'jpg' : 'png'}`, image.blob);
+                                        zip.file(`page-${pageNumber}.jpg`, image.blob);
                                 }
                         }
 
