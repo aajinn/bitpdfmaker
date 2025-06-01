@@ -46,6 +46,9 @@ export default function ExtractTextFromPDF() {
 
                         reader.onload = async () => {
                                 try {
+                                        if (!window.pdfjsLib) {
+                                                throw new Error("PDF.js library not loaded");
+                                        }
                                         const typedArray = new Uint8Array(reader.result as ArrayBuffer);
                                         const loadingTask: PDFDocumentLoadingTask = window.pdfjsLib.getDocument({ data: typedArray });
                                         const pdf = await loadingTask.promise;
@@ -154,6 +157,9 @@ export default function ExtractTextFromPDF() {
                 setProgress("Starting OCR processing...");
 
                 try {
+                        if (!window.pdfjsLib) {
+                                throw new Error("PDF.js library not loaded");
+                        }
                         const arrayBuffer = await currentPdfFile.arrayBuffer();
                         const typedArray = new Uint8Array(arrayBuffer);
                         const pdf = await window.pdfjsLib.getDocument({ data: typedArray }).promise;
