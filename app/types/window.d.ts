@@ -38,6 +38,16 @@ export interface TesseractResult {
     };
 }
 
+export interface TesseractLib {
+    recognize: (
+        image: string,
+        lang: string,
+        options?: {
+            logger: (m: TesseractProgress) => void;
+        }
+    ) => Promise<TesseractResult>;
+}
+
 // jsPDF related types
 export interface JSPDF {
     jsPDF: new (options: { unit: string; format: string }) => JSPDFInstance;
@@ -57,6 +67,13 @@ export interface JSPDFInstance {
 }
 
 // PDFLib related types
+export interface PDFLib {
+    getDocument: (params: { data: Uint8Array }) => PDFDocumentLoadingTask;
+    GlobalWorkerOptions: {
+        workerSrc: string;
+    };
+}
+
 export interface PDFLibDocument {
     getPage: (pageNumber: number) => PDFLibPage;
     getPages: () => PDFLibPage[];
@@ -97,22 +114,9 @@ export interface PDFLibFont {
 }
 
 // Window extension type
-export interface WindowWithLibs extends Window {
-    pdfjsLib?: {
-        getDocument: (options: { data: Uint8Array }) => PDFDocumentLoadingTask;
-        GlobalWorkerOptions: {
-            workerSrc: string;
-        };
-    };
-    Tesseract?: {
-        recognize: (
-            image: string,
-            lang: string,
-            options?: {
-                logger: (m: TesseractProgress) => void;
-            }
-        ) => Promise<TesseractResult>;
-    };
+export interface WindowWithLibs {
+    pdfjsLib?: PDFLib;
+    Tesseract?: TesseractLib;
     jspdf?: JSPDF;
     PDFLib?: {
         PDFDocument: {
