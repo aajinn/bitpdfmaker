@@ -3,8 +3,10 @@
 import { useState, useCallback, useEffect } from "react";
 import Header from "../../components/Header";
 import ExternalScripts from "../../components/ExternalScripts";
-import type { TextItem, PDFDocumentLoadingTask, TesseractProgress } from "@/app/types/window";
+import type { TextItem, PDFDocumentLoadingTask, TesseractProgress, WindowWithLibs } from "@/app/types/window";
 import Head from "next/head";
+
+declare const window: WindowWithLibs;
 
 export default function ExtractTextFromPDF() {
         const [text, setText] = useState("");

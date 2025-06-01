@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "../../components/Header";
-import type { PDFDocumentProxy } from "@/app/types/window";
+import type { PDFDocumentProxy, WindowWithLibs } from "@/app/types/window";
 
 declare const window: WindowWithLibs;
 
