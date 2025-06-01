@@ -127,5 +127,14 @@ export interface WindowWithLibs {
 
 // Declare the window augmentation
 declare global {
-    interface Window extends WindowWithLibs {}
+    interface Window {
+        pdfjsLib?: PDFLib;
+        Tesseract?: TesseractLib;
+        jspdf?: JSPDF;
+        PDFLib?: {
+            PDFDocument: {
+                load: (data: Uint8Array) => Promise<PDFLibDocument>;
+            };
+        };
+    }
 } 
