@@ -5,6 +5,8 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import Header from "../../components/Header";
 import ExternalScripts from "../../components/ExternalScripts";
+import Image from "next/image";
+import { PDFPageProxy } from "pdfjs-dist";
 
 interface PageImage {
         pageNumber: number;
@@ -38,7 +40,7 @@ export default function PDFToImage() {
                 }
         };
 
-        const convertPageToImage = async (page: any, pageNumber: number): Promise<PageImage> => {
+        const convertPageToImage = async (page: PDFPageProxy, pageNumber: number): Promise<PageImage> => {
                 const canvas = canvasRef.current;
                 if (!canvas) throw new Error('Canvas not initialized');
 
@@ -216,10 +218,11 @@ export default function PDFToImage() {
                                                                 {pageImages.map((image) => (
                                                                         <div key={image.pageNumber} className="relative">
                                                                                 <div className="relative w-full aspect-[3/4] border rounded-lg overflow-hidden bg-gray-50">
-                                                                                        <img
+                                                                                        <Image
                                                                                                 src={image.dataUrl}
                                                                                                 alt={`Page ${image.pageNumber}`}
-                                                                                                className="w-full h-full object-contain"
+                                                                                                fill
+                                                                                                className="object-contain"
                                                                                         />
                                                                                         <div className="absolute top-2 left-2">
                                                                                                 <input

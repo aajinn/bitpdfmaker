@@ -3,7 +3,12 @@ import { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
 declare global {
     interface Window {
         pdfjsLib: {
-            getDocument: (options: { data: Uint8Array }) => PDFDocumentLoadingTask;
+            getDocument: (options: { data: Uint8Array }) => {
+                promise: Promise<{
+                    numPages: number;
+                    getPage: (pageNumber: number) => Promise<PDFPageProxy>;
+                }>;
+            };
             GlobalWorkerOptions: {
                 workerSrc: string;
             };
