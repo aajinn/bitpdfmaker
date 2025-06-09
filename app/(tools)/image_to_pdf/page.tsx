@@ -119,17 +119,27 @@ export default function ImageToPDF() {
                                 <title>Convert Images to PDF - Free Online Tool</title>
                                 <meta name="description" content="Convert multiple images to PDF online for free. Support for JPG, PNG, and GIF formats. Easy to use, no registration required." />
                                 <meta name="keywords" content="image to pdf, convert images to pdf, jpg to pdf, png to pdf, gif to pdf, free pdf converter" />
+                                <meta name="robots" content="index, follow" />
+                                <meta property="og:title" content="Convert Images to PDF - Free Online Tool" />
+                                <meta property="og:description" content="Convert multiple images to PDF online for free. Support for JPG, PNG, and GIF formats. Easy to use, no registration required." />
+                                <meta property="og:type" content="website" />
+                                <meta name="twitter:card" content="summary_large_image" />
+                                <meta name="twitter:title" content="Convert Images to PDF - Free Online Tool" />
+                                <meta name="twitter:description" content="Convert multiple images to PDF online for free. Support for JPG, PNG, and GIF formats. Easy to use, no registration required." />
+                                <link rel="canonical" href="https://bitpdfmaker.pro/image-to-pdf" />
                         </Head>
                         <Header />
                         <ExternalScripts />
                         <main className="container mx-auto px-4 py-8">
                                 <div className="max-w-4xl mx-auto">
-                                        <div className="bg-white rounded-lg shadow-md p-6">
-                                                <h1 className="text-2xl font-bold text-gray-900 mb-2">Convert Images to PDF</h1>
-                                                <p className="text-gray-600 mb-6">
-                                                        Convert your images to PDF format easily. Supports JPG, PNG, and GIF files.
-                                                        Arrange images in any order before converting.
-                                                </p>
+                                        <article className="bg-white rounded-lg shadow-md p-6">
+                                                <header>
+                                                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Convert Images to PDF</h1>
+                                                        <p className="text-gray-600 mb-6">
+                                                                Convert your images to PDF format easily. Supports JPG, PNG, and GIF files.
+                                                                Arrange images in any order before converting.
+                                                        </p>
+                                                </header>
 
                                                 {images.length > 0 && (
                                                         <button
@@ -232,13 +242,13 @@ export default function ImageToPDF() {
                                                                 </div>
                                                         )}
 
-                                                        <div className="mt-8 space-y-4 text-gray-600">
+                                                        <section className="mt-8 space-y-4 text-gray-600" aria-label="Instructions">
                                                                 <h2 className="text-xl font-semibold text-gray-900">How to Convert Images to PDF</h2>
                                                                 <ol className="list-decimal list-inside space-y-2">
-                                                                        <li>Click the "Select Images" button to choose your image files</li>
+                                                                        <li>Click the &quot;Select Images&quot; button to choose your image files</li>
                                                                         <li>Arrange the images in your preferred order using the up/down arrows</li>
                                                                         <li>Remove any unwanted images using the remove button</li>
-                                                                        <li>Click "Convert to PDF" to create your PDF file</li>
+                                                                        <li>Click &quot;Convert to PDF&quot; to create your PDF file</li>
                                                                         <li>Your PDF will be automatically downloaded when ready</li>
                                                                 </ol>
 
@@ -253,9 +263,13 @@ export default function ImageToPDF() {
                                                                                 <li>All processing done in your browser</li>
                                                                         </ul>
                                                                 </div>
-                                                        </div>
+                                                        </section>
+
+                                                        <footer className="mt-8 text-sm text-gray-500">
+                                                                <p>All image processing is done securely in your browser. Your files are never uploaded to our servers.</p>
+                                                        </footer>
                                                 </div>
-                                        </div>
+                                        </article>
                                 </div>
                         </main>
                 </div>
