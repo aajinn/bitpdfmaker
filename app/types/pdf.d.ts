@@ -14,6 +14,20 @@ declare global {
                 workerSrc: string;
             };
         };
+        jspdf: {
+            jsPDF: new () => {
+                addPage: () => void;
+                addImage: (image: HTMLImageElement, format: string, x: number, y: number, width: number, height: number) => void;
+                save: (filename: string) => void;
+                getImageProperties: (image: HTMLImageElement) => { width: number; height: number };
+                internal: {
+                    pageSize: {
+                        getWidth: () => number;
+                        getHeight: () => number;
+                    };
+                };
+            };
+        };
     }
 }
 
