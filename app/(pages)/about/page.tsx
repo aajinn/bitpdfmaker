@@ -20,7 +20,7 @@ export default function About() {
                                                 <section className="mb-8">
                                                         <h2 className="text-2xl font-semibold text-gray-900 mb-4">Our Mission</h2>
                                                         <p className="text-gray-600 mb-4">
-                                                                At BitMakerPDF, we're dedicated to making PDF manipulation simple, efficient, and accessible to everyone. Our mission is to provide high-quality, user-friendly PDF tools that help people work smarter, not harder.
+                                                                At BitMakerPDF, we&apos;re dedicated to making PDF manipulation simple, efficient, and accessible to everyone. Our mission is to provide high-quality, user-friendly PDF tools that help people work smarter, not harder.
                                                         </p>
                                                 </section>
 
@@ -84,7 +84,7 @@ export default function About() {
                                                 <section>
                                                         <h2 className="text-2xl font-semibold text-gray-900 mb-4">Get in Touch</h2>
                                                         <p className="text-gray-600 mb-4">
-                                                                Have questions or suggestions? We'd love to hear from you. Contact us at:
+                                                                Have questions or suggestions? We&apos;d love to hear from you. Contact us at:
                                                         </p>
                                                         <p className="text-gray-600">
                                                                 Email: support@bitmakerpdf.com
