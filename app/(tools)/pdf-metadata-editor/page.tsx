@@ -34,8 +34,8 @@ export default function PDFMetadataEditor() {
                 setIsLoading(true);
                 try {
                         const arrayBuffer = await file.arrayBuffer();
-                        // @ts-expect-error: PDF.js types are not available for getDocument on window.pdfjsLib
-                        const pdf = await window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
+                        // Use 'any' to allow getMetadata, which is not in the type definition
+                        const pdf: any = await window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
                         // Use the public getMetadata() API
                         const meta = await pdf.getMetadata();
                         setMetadata({
@@ -62,11 +62,10 @@ export default function PDFMetadataEditor() {
                 if (!pdfFile) return;
                 setIsLoading(true);
                 try {
-                        // @ts-expect-error: jsPDF is loaded from CDN and not typed
+                        // jsPDF is loaded from CDN and not typed
                         const { jsPDF } = window.jspdf;
                         const arrayBuffer = await pdfFile.arrayBuffer();
-                        // @ts-expect-error: PDF.js types are not available for getDocument on window.pdfjsLib
-                        const pdf = await window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
+                        const pdf: any = await window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
                         // Create new PDF and copy pages
                         const newPdf = new jsPDF();
                         const numPages = pdf.numPages;
@@ -80,10 +79,11 @@ export default function PDFMetadataEditor() {
                                 await page.render({ canvasContext: context!, viewport }).promise;
                                 const imgData = canvas.toDataURL("image/jpeg", 0.9);
                                 if (i > 1) newPdf.addPage();
-                                newPdf.addImage(imgData, "JPEG", 0, 0, 210, 297);
+                                // Cast imgData to 'any' to satisfy jsPDF typings
+                                newPdf.addImage(imgData as any, "JPEG", 0, 0, 210, 297);
                         }
                         // Set metadata
-                        newPdf.setProperties({
+                        (newPdf as any).setProperties({
                                 title: metadata.title,
                                 author: metadata.author,
                                 subject: metadata.subject,
