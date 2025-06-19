@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useState, useRef, DragEvent, useCallback, memo } from "react";
 import Header from "../../components/Header";
 import ExternalScripts from "../../components/ExternalScripts";
