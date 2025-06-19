@@ -1,14 +1,14 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "./components/Header";
-import type { PDFLib, TesseractLib, JSPDF, TesseractProgress, WindowWithLibs } from "@/app/types/window";
+import type { PDFLib, TesseractLib, JSPDF, WindowWithLibs } from "@/app/types/window";
 import ToolList from "./components/ToolList";
 import Head from "next/head";
 
 declare const window: WindowWithLibs;
 
 export default function Home() {
-     const [text, setText] = useState<string>("");
+     const [text] = useState<string>("");
      const [fontSize] = useState<number>(8);
      const pdfjsRef = useRef<PDFLib | null>(null);
      const TesseractRef = useRef<TesseractLib | null>(null);
