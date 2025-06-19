@@ -82,6 +82,18 @@ const tools: Tool[] = [
                         </svg>
                 ),
         },
+        {
+                name: "PDF Comparison",
+                description: "Compare two PDF files and highlight differences",
+                path: "/pdf-comparison",
+                icon: (
+                        <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <rect x="3" y="5" width="7" height="14" rx="2" strokeWidth="2" />
+                                <rect x="14" y="5" width="7" height="14" rx="2" strokeWidth="2" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 12h4" />
+                        </svg>
+                ),
+        },
 ];
 
 interface ToolListProps {
