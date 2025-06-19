@@ -10,13 +10,10 @@ declare const window: WindowWithLibs;
 export default function Home() {
      const [text, setText] = useState<string>("");
      const [cells, setCells] = useState<string[]>([]);
-     const [fontSize, setFontSize] = useState<number>(8);
+     const [fontSize] = useState<number>(8);
      const pdfjsRef = useRef<PDFLib | null>(null);
      const TesseractRef = useRef<TesseractLib | null>(null);
      const jsPDFRef = useRef<JSPDF | null>(null);
-     const [loading, setLoading] = useState<boolean>(false);
-     const [error, setError] = useState<string>("");
-     const [progress, setProgress] = useState<string>("");
 
      const rows = 5;
      const cols = 3;
@@ -90,17 +87,12 @@ export default function Home() {
      const extractText = useCallback(
           async (file: File) => {
                if (!pdfjsRef.current || !TesseractRef.current) {
-                    setError(
-                         "Libraries not loaded yet, please try again shortly."
-                    );
+                    console.error("Libraries not loaded yet, please try again shortly.");
                     return;
                }
 
-               setError("");
-               setLoading(true);
                setText("");
                setCells([]);
-               setProgress("Starting PDF processing...");
 
                try {
                     const reader = new FileReader();
@@ -125,9 +117,7 @@ export default function Home() {
                               let fullText = "";
 
                               for (let i = 1; i <= pdf.numPages; i++) {
-                                   setProgress(
-                                        `Rendering page ${i} of ${pdf.numPages}...`
-                                   );
+                                   console.log(`Rendering page ${i} of ${pdf.numPages}...`);
 
                                    const page = await pdf.getPage(i);
                                    const viewport = page.getViewport({
@@ -152,9 +142,7 @@ export default function Home() {
                                    }).promise;
                                    const dataUrl = canvas.toDataURL();
 
-                                   setProgress(
-                                        `Performing OCR on page ${i}...`
-                                   );
+                                   console.log(`Performing OCR on page ${i}...`);
 
                                    const result = await tesseractLib.recognize(
                                         dataUrl,
@@ -165,12 +153,10 @@ export default function Home() {
                                                        m.status ===
                                                        "recognizing text"
                                                   ) {
-                                                       setProgress(
-                                                            `OCR progress on page ${i}: ${(
-                                                                 m.progress *
-                                                                 100
-                                                            ).toFixed(1)}%`
-                                                       );
+                                                       console.log(`OCR progress on page ${i}: ${(
+                                                            m.progress *
+                                                            100
+                                                       ).toFixed(1)}%`);
                                                   }
                                              },
                                         }
@@ -179,104 +165,37 @@ export default function Home() {
                                    fullText += result.data.text + " ";
                               }
 
-                              setProgress("Finalizing text extraction...");
+                              console.log("Finalizing text extraction...");
                               const cleanText = fullText
                                    .trim()
                                    .replace(/\s+/g, " ");
                               setText(cleanText);
                               generateCells(cleanText);
-                              setProgress("Text extraction completed!");
+                              console.log("Text extraction completed!");
                          } catch (err) {
                               console.error("PDF processing error:", err);
-                              setError(
+                              console.error(
                                    "Failed to process PDF. " +
                                    (err instanceof Error
                                         ? err.message
                                         : "")
                               );
-                         } finally {
-                              setLoading(false);
                          }
                     };
 
                     reader.onerror = () => {
-                         setError("Failed to read the file");
-                         setLoading(false);
+                         console.error("Failed to read the file");
                     };
 
                     reader.readAsArrayBuffer(file);
                } catch (err) {
                     console.error("Extract text error:", err);
-                    setError("Failed to extract text from PDF.");
-                    setLoading(false);
-                    setProgress("");
+                    console.error("Failed to extract text from PDF.");
+                    console.log("");
                }
           },
           [generateCells]
      );
-
-     // Handle PDF upload
-     const handleUpload = useCallback(
-          (e: React.ChangeEvent<HTMLInputElement>) => {
-               const file = e.target.files?.[0];
-               if (!file) return;
-
-               if (file.type !== "application/pdf") {
-                    setError("Please upload a valid PDF file.");
-                    return;
-               }
-
-               // Clear old progress and data when new PDF is uploaded
-               setProgress("");
-               setError("");
-               setLoading(false);
-               setText("");
-               setCells([]);
-
-               extractText(file);
-          },
-          [extractText]
-     );
-
-     // Download the formatted PDF
-     const downloadPDF = useCallback(() => {
-          if (!jsPDFRef.current || cells.length === 0) return;
-
-          // Store in a local variable to satisfy TypeScript null checks
-          const jspdfLib = jsPDFRef.current;
-          const { jsPDF } = jspdfLib;
-
-          const doc = new jsPDF({ unit: "mm", format: "a4" });
-          doc.setFontSize(fontSize);
-          doc.setFont("helvetica", "normal");
-
-          const margin = 10;
-          const pageWidth = 210 - 2 * margin;
-          const pageHeight = 297 - 2 * margin;
-          const cellWidth = pageWidth / cols;
-          const cellHeight = pageHeight / rows;
-
-          let x = margin;
-          let y = margin;
-
-          cells.forEach((cell, i) => {
-               if (i > 0 && i % cols === 0) {
-                    x = margin;
-                    y += cellHeight;
-                    if (y + cellHeight > pageHeight + margin) {
-                         doc.addPage();
-                         y = margin;
-                    }
-               }
-
-               doc.text(cell, x + 2, y + fontSize + 2, {
-                    maxWidth: cellWidth - 4,
-               });
-               x += cellWidth;
-          });
-
-          doc.save("BitMakerPdf-output.pdf");
-     }, [cells, fontSize, rows, cols]);
 
      // Update cells when font size changes
      useEffect(() => {
