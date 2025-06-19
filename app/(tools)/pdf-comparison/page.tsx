@@ -268,10 +268,16 @@ export default function PDFComparison() {
                                                         </div>
                                                 </div>
                                                 <div className="mt-8">
+                                                        <h2 className="text-lg font-bold mb-2">Differences</h2>
+                                                        <div className="bg-yellow-50 border border-yellow-200 rounded p-4 min-h-[60px] text-yellow-800">
+                                                                {diffInfo || "No comparison yet."}
+                                                        </div>
+                                                </div>
+                                                <div className="mt-8">
                                                         <h2 className="text-xl font-semibold text-gray-900 mb-2">How to Compare PDFs</h2>
                                                         <ol className="list-decimal list-inside space-y-2 text-gray-600">
-                                                                <li>Select two PDF files by clicking "Select PDF A" and "Select PDF B"</li>
-                                                                <li>Click "Compare PDFs" to highlight differences</li>
+                                                                <li>Select two PDF files by clicking &quot;Select PDF A&quot; and &quot;Select PDF B&quot;</li>
+                                                                <li>Click &quot;Compare PDFs&quot; to highlight differences</li>
                                                                 <li>View the side-by-side preview and difference highlights</li>
                                                         </ol>
                                                         <div className="mt-6">
@@ -284,12 +290,6 @@ export default function PDFComparison() {
                                                                         <li>All processing done in your browser</li>
                                                                         <li>Privacy-friendly: your files never leave your device</li>
                                                                 </ul>
-                                                        </div>
-                                                </div>
-                                                <div className="mt-8">
-                                                        <h2 className="text-lg font-bold mb-2">Differences</h2>
-                                                        <div className="bg-yellow-50 border border-yellow-200 rounded p-4 min-h-[60px] text-yellow-800">
-                                                                {diffInfo || "No comparison yet."}
                                                         </div>
                                                 </div>
                                                 <footer className="mt-8 text-sm text-gray-500 text-center">
