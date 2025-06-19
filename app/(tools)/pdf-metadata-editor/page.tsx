@@ -34,7 +34,7 @@ export default function PDFMetadataEditor() {
                 setIsLoading(true);
                 try {
                         const arrayBuffer = await file.arrayBuffer();
-                        // Use 'any' to allow getMetadata, which is not in the type definition
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const pdf: any = await window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
                         // Use the public getMetadata() API
                         const meta = await pdf.getMetadata();
@@ -65,6 +65,7 @@ export default function PDFMetadataEditor() {
                         // jsPDF is loaded from CDN and not typed
                         const { jsPDF } = window.jspdf;
                         const arrayBuffer = await pdfFile.arrayBuffer();
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const pdf: any = await window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
                         // Create new PDF and copy pages
                         const newPdf = new jsPDF();
@@ -79,10 +80,11 @@ export default function PDFMetadataEditor() {
                                 await page.render({ canvasContext: context!, viewport }).promise;
                                 const imgData = canvas.toDataURL("image/jpeg", 0.9);
                                 if (i > 1) newPdf.addPage();
-                                // Cast imgData to 'any' to satisfy jsPDF typings
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 newPdf.addImage(imgData as any, "JPEG", 0, 0, 210, 297);
                         }
                         // Set metadata
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         (newPdf as any).setProperties({
                                 title: metadata.title,
                                 author: metadata.author,
