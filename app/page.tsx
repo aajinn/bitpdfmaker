@@ -9,7 +9,6 @@ declare const window: WindowWithLibs;
 
 export default function Home() {
      const [text, setText] = useState<string>("");
-     const [cells, setCells] = useState<string[]>([]);
      const [fontSize] = useState<number>(8);
      const pdfjsRef = useRef<PDFLib | null>(null);
      const TesseractRef = useRef<TesseractLib | null>(null);
@@ -78,123 +77,9 @@ export default function Home() {
                     tempCells.push("");
                }
 
-               setCells(tempCells);
+               console.log("Text extraction completed!");
           },
           [text, fontSize, rows, cols]
-     );
-
-     // Extract text from PDF
-     const extractText = useCallback(
-          async (file: File) => {
-               if (!pdfjsRef.current || !TesseractRef.current) {
-                    console.error("Libraries not loaded yet, please try again shortly.");
-                    return;
-               }
-
-               setText("");
-               setCells([]);
-
-               try {
-                    const reader = new FileReader();
-
-                    reader.onload = async () => {
-                         try {
-                              const typedArray = new Uint8Array(
-                                   reader.result as ArrayBuffer
-                              );
-
-                              // Store in local variables to satisfy TypeScript null checks
-                              const pdfjsLib = pdfjsRef.current;
-                              const tesseractLib = TesseractRef.current;
-
-                              if (!pdfjsLib || !tesseractLib) {
-                                   throw new Error("Libraries not available");
-                              }
-
-                              const pdf = await pdfjsLib.getDocument({
-                                   data: typedArray,
-                              }).promise;
-                              let fullText = "";
-
-                              for (let i = 1; i <= pdf.numPages; i++) {
-                                   console.log(`Rendering page ${i} of ${pdf.numPages}...`);
-
-                                   const page = await pdf.getPage(i);
-                                   const viewport = page.getViewport({
-                                        scale: 2,
-                                   });
-                                   const canvas =
-                                        document.createElement("canvas");
-                                   const ctx = canvas.getContext("2d");
-
-                                   if (!ctx) {
-                                        throw new Error(
-                                             "Could not create canvas context"
-                                        );
-                                   }
-
-                                   canvas.width = viewport.width;
-                                   canvas.height = viewport.height;
-
-                                   await page.render({
-                                        canvasContext: ctx,
-                                        viewport,
-                                   }).promise;
-                                   const dataUrl = canvas.toDataURL();
-
-                                   console.log(`Performing OCR on page ${i}...`);
-
-                                   const result = await tesseractLib.recognize(
-                                        dataUrl,
-                                        "eng",
-                                        {
-                                             logger: (m: TesseractProgress) => {
-                                                  if (
-                                                       m.status ===
-                                                       "recognizing text"
-                                                  ) {
-                                                       console.log(`OCR progress on page ${i}: ${(
-                                                            m.progress *
-                                                            100
-                                                       ).toFixed(1)}%`);
-                                                  }
-                                             },
-                                        }
-                                   );
-
-                                   fullText += result.data.text + " ";
-                              }
-
-                              console.log("Finalizing text extraction...");
-                              const cleanText = fullText
-                                   .trim()
-                                   .replace(/\s+/g, " ");
-                              setText(cleanText);
-                              generateCells(cleanText);
-                              console.log("Text extraction completed!");
-                         } catch (err) {
-                              console.error("PDF processing error:", err);
-                              console.error(
-                                   "Failed to process PDF. " +
-                                   (err instanceof Error
-                                        ? err.message
-                                        : "")
-                              );
-                         }
-                    };
-
-                    reader.onerror = () => {
-                         console.error("Failed to read the file");
-                    };
-
-                    reader.readAsArrayBuffer(file);
-               } catch (err) {
-                    console.error("Extract text error:", err);
-                    console.error("Failed to extract text from PDF.");
-                    console.log("");
-               }
-          },
-          [generateCells]
      );
 
      // Update cells when font size changes
