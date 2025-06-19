@@ -71,6 +71,17 @@ const tools: Tool[] = [
                         </svg>
                 ),
         },
+        {
+                name: "PDF Metadata Editor",
+                description: "Edit PDF properties: title, author, keywords, and more",
+                path: "/pdf-metadata-editor",
+                icon: (
+                        <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <rect x="4" y="4" width="16" height="16" rx="2" strokeWidth="2" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h8M8 16h5M8 8h8" />
+                        </svg>
+                ),
+        },
 ];
 
 interface ToolListProps {
