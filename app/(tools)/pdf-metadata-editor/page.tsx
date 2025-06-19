@@ -34,7 +34,7 @@ export default function PDFMetadataEditor() {
                 setIsLoading(true);
                 try {
                         const arrayBuffer = await file.arrayBuffer();
-                        // @ts-expect-error
+                        // @ts-expect-error: PDF.js types are not available for getDocument on window.pdfjsLib
                         const pdf = await window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
                         // Use the public getMetadata() API
                         const meta = await pdf.getMetadata();
@@ -62,10 +62,10 @@ export default function PDFMetadataEditor() {
                 if (!pdfFile) return;
                 setIsLoading(true);
                 try {
-                        // @ts-expect-error
+                        // @ts-expect-error: jsPDF is loaded from CDN and not typed
                         const { jsPDF } = window.jspdf;
                         const arrayBuffer = await pdfFile.arrayBuffer();
-                        // @ts-expect-error
+                        // @ts-expect-error: PDF.js types are not available for getDocument on window.pdfjsLib
                         const pdf = await window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
                         // Create new PDF and copy pages
                         const newPdf = new jsPDF();
