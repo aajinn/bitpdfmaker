@@ -2,10 +2,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "./components/Header";
 import type { PDFLib, TesseractLib, JSPDF, TesseractProgress, WindowWithLibs } from "@/app/types/window";
+import ToolList from "./components/ToolList";
+import Head from "next/head";
 
 declare const window: WindowWithLibs;
 
-export default function Page() {
+export default function Home() {
      const [text, setText] = useState<string>("");
      const [cells, setCells] = useState<string[]>([]);
      const [fontSize, setFontSize] = useState<number>(8);
@@ -282,131 +284,136 @@ export default function Page() {
      }, [fontSize, text, generateCells]);
 
      return (
-          <main className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-cyan-100 font-sans flex flex-col">
-               <Header />
-
-               <section className="flex-grow flex flex-col items-center p-2 sm:p-6">
-                    <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-3 sm:p-8 flex flex-col gap-3 sm:gap-6 border border-indigo-200">
-                         {/* File Upload */}
-                         <div className="flex flex-col gap-3">
-                              <label
-                                   htmlFor="pdf-upload"
-                                   className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl py-2 sm:py-3 text-center font-semibold text-sm sm:text-base transition shadow-md select-none"
-                                   tabIndex={0}
-                                   onKeyDown={(e) =>
-                                        e.key === "Enter" &&
-                                        document.getElementById("pdf-upload")?.click()
-                                   }
-                              >
-                                   {loading ? "Processing PDF..." : "Upload PDF"}
-                              </label>
-                              <input
-                                   type="file"
-                                   id="pdf-upload"
-                                   accept="application/pdf"
-                                   onChange={handleUpload}
-                                   disabled={loading}
-                                   className="hidden"
-                              />
-                         </div>
-
-                         {/* Progress and Error Messages */}
-                         {progress && (
-                              <p className="text-center text-indigo-700 font-medium text-sm sm:text-base">
-                                   {progress}
-                              </p>
-                         )}
-                         {error && (
-                              <p className="text-center text-red-600 font-semibold text-sm sm:text-base">
-                                   {error}
-                              </p>
-                         )}
-
-                         {/* Text Preview */}
-                         {text && (
-                              <div className="flex flex-col gap-3">
-                                   <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-                                        Extracted Text Preview
-                                   </h2>
-                                   <textarea
-                                        value={text}
-                                        onChange={(e) => {
-                                             setText(e.target.value);
-                                             generateCells(e.target.value);
-                                        }}
-                                        className="w-full h-32 sm:h-48 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm sm:text-base"
-                                        placeholder="Extracted text will appear here..."
-                                   />
-                              </div>
-                         )}
-
-                         {/* Font Size Control */}
-                         {text && (
-                              <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
-                                   <label className="text-sm sm:text-base text-gray-700">
-                                        Font Size:
-                                   </label>
-                                   <div className="flex items-center gap-2">
-                                        <button
-                                             onClick={() => setFontSize((f) => Math.max(6, f - 1))}
-                                             className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm sm:text-base"
-                                        >
-                                             -
-                                        </button>
-                                        <span className="text-indigo-700 font-semibold text-sm sm:text-base">
-                                             {fontSize}pt
-                                        </span>
-                                        <button
-                                             onClick={() => setFontSize((f) => Math.min(12, f + 1))}
-                                             className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm sm:text-base"
-                                        >
-                                             +
-                                        </button>
-                                   </div>
-                              </div>
-                         )}
-
-                         {/* Preview Grid */}
-                         {cells.length > 0 && (
-                              <div className="flex flex-col gap-3">
-                                   <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-                                        Preview
-                                   </h2>
-                                   <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                                        {cells.map((cell, index) => (
-                                             <div
-                                                  key={index}
-                                                  className="aspect-[210/297] p-2 sm:p-4 border border-gray-300 rounded-lg bg-gray-50 overflow-hidden"
+          <>
+               <Head>
+                    <title>PDF Tools - Free Online PDF Converter & Editor</title>
+                    <meta
+                         name="description"
+                         content="Free online PDF tools to convert, merge, watermark, and edit PDF files. No installation required. Fast, secure, and easy to use."
+                    />
+                    <meta name="keywords" content="PDF converter, PDF editor, merge PDF, watermark PDF, PDF to image, image to PDF" />
+                    <meta property="og:title" content="PDF Tools - Free Online PDF Converter & Editor" />
+                    <meta
+                         property="og:description"
+                         content="Free online PDF tools to convert, merge, watermark, and edit PDF files. No installation required. Fast, secure, and easy to use."
+                    />
+                    <meta property="og:type" content="website" />
+                    <meta name="twitter:card" content="summary_large_image" />
+                    <meta name="twitter:title" content="PDF Tools - Free Online PDF Converter & Editor" />
+                    <meta
+                         name="twitter:description"
+                         content="Free online PDF tools to convert, merge, watermark, and edit PDF files. No installation required. Fast, secure, and easy to use."
+                    />
+               </Head>
+               <div className="min-h-screen bg-gray-50">
+                    <Header />
+                    <main>
+                         {/* Hero Section */}
+                         <section className="py-20 bg-white">
+                              <div className="container mx-auto px-4">
+                                   <div className="max-w-3xl mx-auto text-center">
+                                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                                             Free Online PDF Tools
+                                        </h1>
+                                        <p className="text-xl text-gray-600 mb-8">
+                                             Convert, merge, watermark, and edit PDF files online. No installation required.
+                                             Fast, secure, and easy to use.
+                                        </p>
+                                        <div className="flex flex-wrap justify-center gap-4">
+                                             <a
+                                                  href="#tools"
+                                                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                                              >
-                                                  <p
-                                                       className="text-[8pt] leading-tight"
-                                                       style={{ fontSize: `${fontSize}pt` }}
-                                                  >
-                                                       {cell}
-                                                  </p>
-                                             </div>
-                                        ))}
+                                                  Get Started
+                                             </a>
+                                             <a
+                                                  href="#features"
+                                                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                             >
+                                                  Learn More
+                                             </a>
+                                        </div>
                                    </div>
                               </div>
-                         )}
+                         </section>
 
-                         {/* Download Button */}
-                         {cells.length > 0 && (
-                              <button
-                                   onClick={downloadPDF}
-                                   className="w-full sm:w-auto mx-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2 sm:py-3 px-6 sm:px-8 rounded-xl transition shadow-md text-sm sm:text-base"
-                              >
-                                   Download PDF
-                              </button>
-                         )}
-                    </div>
-               </section>
+                         {/* Features Section */}
+                         <section id="features" className="py-16 bg-gray-50">
+                              <div className="container mx-auto px-4">
+                                   <div className="max-w-3xl mx-auto text-center mb-12">
+                                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Our PDF Tools?</h2>
+                                        <p className="text-gray-600">
+                                             Our tools are designed to make PDF manipulation simple and efficient.
+                                        </p>
+                                   </div>
+                                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                                        <div className="bg-white p-6 rounded-lg shadow-sm">
+                                             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                                  <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                       <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M13 10V3L4 14h7v7l9-11h-7z"
+                                                       />
+                                                  </svg>
+                                             </div>
+                                             <h3 className="text-lg font-semibold text-gray-900 mb-2">Fast & Efficient</h3>
+                                             <p className="text-gray-600">
+                                                  Process your PDFs quickly with our optimized tools. No waiting in queues.
+                                             </p>
+                                        </div>
+                                        <div className="bg-white p-6 rounded-lg shadow-sm">
+                                             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                                  <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                       <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                                       />
+                                                  </svg>
+                                             </div>
+                                             <h3 className="text-lg font-semibold text-gray-900 mb-2">Secure & Private</h3>
+                                             <p className="text-gray-600">
+                                                  Your files are processed locally in your browser. We never store your data.
+                                             </p>
+                                        </div>
+                                        <div className="bg-white p-6 rounded-lg shadow-sm">
+                                             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                                  <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                       <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                                                       />
+                                                  </svg>
+                                             </div>
+                                             <h3 className="text-lg font-semibold text-gray-900 mb-2">Free to Use</h3>
+                                             <p className="text-gray-600">
+                                                  All tools are completely free to use. No hidden costs or subscriptions.
+                                             </p>
+                                        </div>
+                                   </div>
+                              </div>
+                         </section>
 
-               <footer className="text-bg-indigo-400 py-4 sm:py-6 text-center select-none text-sm sm:text-base">
-                    &copy; {new Date().getFullYear()} BitMakerPdf. All rights
-                    reserved.
-               </footer>
-          </main>
+                         {/* Tools Section */}
+                         <section id="tools" className="py-16 bg-white">
+                              <div className="container mx-auto px-4">
+                                   <div className="max-w-3xl mx-auto text-center mb-12">
+                                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Our PDF Tools</h2>
+                                        <p className="text-gray-600">
+                                             Choose from our range of powerful PDF tools to get your work done.
+                                        </p>
+                                   </div>
+                                   <ToolList gridCols={2} className="max-w-5xl mx-auto" />
+                              </div>
+                         </section>
+                    </main>
+               </div>
+          </>
      );
 }
 
