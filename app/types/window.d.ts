@@ -136,11 +136,12 @@ declare global {
                 load: (data: Uint8Array) => Promise<PDFLibDocument>;
             };
         };
-        JSZip?: any;
+        JSZip?: new () => {
+            file: (name: string, blob: Blob) => void;
+            generateAsync: (opts: { type: string }) => Promise<Blob>;
+        };
         saveAs?: (blob: Blob, name: string) => void;
     }
 }
-
-import type { jsPDF } from "jspdf";
 
 export {}; 
