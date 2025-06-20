@@ -30,6 +30,7 @@ export default function SplitPDF() {
         const [pageThumbs, setPageThumbs] = useState<PageThumb[]>([]);
         const canvasRef = useRef<HTMLCanvasElement>(null);
         const splitsListRef = useRef<HTMLDivElement>(null);
+        const downloadBoxRef = useRef<HTMLDivElement>(null);
 
         useEffect(() => {
                 const checkPdfJsLoaded = () => {
@@ -212,6 +213,13 @@ export default function SplitPDF() {
                 }
         };
 
+        // Scroll to download box when splitBlobs is set
+        useEffect(() => {
+                if (splitBlobs.length > 0 && downloadBoxRef.current) {
+                        downloadBoxRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+        }, [splitBlobs]);
+
         return (
                 <>
                         <Head>
@@ -370,7 +378,7 @@ export default function SplitPDF() {
                                                 )}
                                                 {/* Download Links */}
                                                 {splitBlobs.length > 0 && (
-                                                        <div className="flex flex-col gap-2 mt-4">
+                                                        <div className="flex flex-col gap-2 mt-4" ref={downloadBoxRef}>
                                                                 <h2 className="text-lg font-semibold text-gray-800">Download Split PDFs</h2>
                                                                 <div className="flex flex-wrap gap-3">
                                                                         {splitBlobs.map(({ name, blob }, i) => (
