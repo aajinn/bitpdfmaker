@@ -341,7 +341,7 @@ export default function SplitPDF() {
                                                                                                         height={160}
                                                                                                         className="w-full aspect-[3/4] object-contain bg-gray-50"
                                                                                                         unoptimized
-                                                                                                />
+                                                                                                />ad
                                                                                                 <input
                                                                                                         type="checkbox"
                                                                                                         checked={selectedPages.includes(pageNumber)}

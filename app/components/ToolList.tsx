@@ -94,6 +94,16 @@ const tools: Tool[] = [
                         </svg>
                 ),
         },
+        {
+                name: "PDF Split",
+                description: "Split PDF files into multiple documents",
+                path: "/split-pdf",
+                icon: (
+                        <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                ),
+        },
 ];
 
 interface ToolListProps {
