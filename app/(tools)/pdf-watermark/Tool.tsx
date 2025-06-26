@@ -286,7 +286,7 @@ export default function PdfWatermarkTool() {
 
                                 for (const watermark of watermarks) {
                                         if (watermark.pages.includes(i)) {
-                                                // @ts-expect-error
+                                                // @ts-expect-error: jsPDF GState is not typed
                                                 newPdf.setGState(new newPdf.GState({ opacity: watermark.opacity }));
 
                                                 const pageWidth = newPdf.internal.pageSize.getWidth();
@@ -342,7 +342,7 @@ export default function PdfWatermarkTool() {
                                                         image.src = watermark.content;
                                                 }
 
-                                                // @ts-expect-error
+                                                // @ts-expect-error: jsPDF GState is not typed
                                                 newPdf.setGState(new newPdf.GState({ opacity: 1 }));
                                         }
                                 }
