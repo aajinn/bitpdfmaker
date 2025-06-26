@@ -9,7 +9,7 @@ interface Tool {
         icon: React.ReactNode;
 }
 
-const tools: Tool[] = [
+export const tools: Tool[] = [
         {
                 name: "Image to PDF",
                 description: "Convert images to PDF format",

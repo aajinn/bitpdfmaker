@@ -2,8 +2,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "./components/Header";
 import type { PDFLib, TesseractLib, JSPDF, WindowWithLibs } from "@/app/types/window";
-import ToolList from "./components/ToolList";
+import AllTools from "./components/AllTools";
 import Head from "next/head";
+import ToolList from "./components/ToolList";
 
 declare const window: WindowWithLibs;
 
@@ -150,6 +151,8 @@ export default function Home() {
                                              Our tools are designed to make PDF manipulation simple and efficient.
                                         </p>
                                    </div>
+
+
                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                                         <div className="bg-white p-6 rounded-lg shadow-sm">
                                              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
@@ -203,6 +206,7 @@ export default function Home() {
                               </div>
                          </section>
 
+
                          {/* Tools Section */}
                          <section id="tools" className="py-16 bg-white">
                               <div className="container mx-auto px-4">
@@ -212,7 +216,8 @@ export default function Home() {
                                              Choose from our range of powerful PDF tools to get your work done.
                                         </p>
                                    </div>
-                                   <ToolList gridCols={2} className="max-w-5xl mx-auto" />
+                                   <ToolList />
+                                   <AllTools />
                               </div>
                          </section>
                     </main>
