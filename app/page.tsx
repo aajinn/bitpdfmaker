@@ -5,6 +5,7 @@ import type { PDFLib, TesseractLib, JSPDF, WindowWithLibs } from "@/app/types/wi
 import AllTools from "./components/AllTools";
 import Head from "next/head";
 import ToolList from "./components/ToolList";
+import Footer from "./components/Footer";
 
 declare const window: WindowWithLibs;
 
@@ -220,6 +221,7 @@ export default function Home() {
                                    <AllTools />
                               </div>
                          </section>
+                         <Footer />
                     </main>
                </div>
           </>
