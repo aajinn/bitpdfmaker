@@ -1,16 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
 import Header from "../../components/Header";
 import ExternalScripts from "../../components/ExternalScripts";
-import Image from "next/image";
 import Head from "next/head";
 import Tool from "./Tool";
-
-interface ImageFile {
-        file: File;
-        preview: string;
-}
 
 export default function ImageToPDFPage() {
         return (

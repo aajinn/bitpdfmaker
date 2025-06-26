@@ -215,7 +215,7 @@ export default function PdfComparisonTool() {
                                 <ol className="list-decimal list-inside space-y-2">
                                         <li>Select your first PDF file (PDF A)</li>
                                         <li>Select your second PDF file (PDF B)</li>
-                                        <li>Click "Compare PDFs" to see the differences</li>
+                                        <li>Click &quot;Compare PDFs&quot; to see the differences</li>
                                 </ol>
                                 <div className="mt-6">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-2">Features</h3>

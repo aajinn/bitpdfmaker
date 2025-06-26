@@ -1,20 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef, Fragment } from "react";
 import Header from "../../components/Header";
 import ExternalScripts from "../../components/ExternalScripts";
 import Head from "next/head";
-import type { jsPDF as JsPDFType } from "jspdf";
-import Image from "next/image";
 import Tool from "./Tool";
-
-interface PageThumb {
-        pageNumber: number;
-        dataUrl: string;
-}
-
-// Add global type declarations for JSZip and saveAs
-// (No need to redeclare Window interface in this file)
 
 export default function SplitPDFPage() {
         return (

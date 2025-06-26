@@ -286,6 +286,7 @@ export default function PdfWatermarkTool() {
 
                                 for (const watermark of watermarks) {
                                         if (watermark.pages.includes(i)) {
+                                                // @ts-ignore
                                                 newPdf.setGState(new newPdf.GState({ opacity: watermark.opacity }));
 
                                                 const pageWidth = newPdf.internal.pageSize.getWidth();
@@ -311,37 +312,37 @@ export default function PdfWatermarkTool() {
 
                                                         newPdf.text(watermark.content, x, y, { angle: watermark.rotation });
                                                 } else if (watermark.type === 'image') {
-                                                        const img = await new Promise<HTMLImageElement>(resolve => {
-                                                                const image = new Image();
-                                                                image.onload = () => resolve(image);
-                                                                image.src = watermark.content;
-                                                        });
-                                                        const imgWidth = img.width * watermark.scale;
-                                                        const imgHeight = img.height * watermark.scale;
+                                                        const image = new window.Image();
+                                                        image.onload = () => {
+                                                                const imgWidth = image.width * watermark.scale;
+                                                                const imgHeight = image.height * watermark.scale;
 
-                                                        let x = 0, y = 0;
-                                                        switch (watermark.position) {
-                                                                case 'top-left': x = 10; y = 10; break;
-                                                                case 'top-right': x = pageWidth - imgWidth - 10; y = 10; break;
-                                                                case 'bottom-left': x = 10; y = pageHeight - imgHeight - 10; break;
-                                                                case 'bottom-right': x = pageWidth - imgWidth - 10; y = pageHeight - imgHeight - 10; break;
-                                                                case 'center': x = (pageWidth - imgWidth) / 2; y = (pageHeight - imgHeight) / 2; break;
-                                                        }
+                                                                let x = 0, y = 0;
+                                                                switch (watermark.position) {
+                                                                        case 'top-left': x = 10; y = 10; break;
+                                                                        case 'top-right': x = pageWidth - imgWidth - 10; y = 10; break;
+                                                                        case 'bottom-left': x = 10; y = pageHeight - imgHeight - 10; break;
+                                                                        case 'bottom-right': x = pageWidth - imgWidth - 10; y = pageHeight - imgHeight - 10; break;
+                                                                        case 'center': x = (pageWidth - imgWidth) / 2; y = (pageHeight - imgHeight) / 2; break;
+                                                                }
 
-                                                        // Rotation requires canvas manipulation for images
-                                                        const rotatedCanvas = document.createElement('canvas');
-                                                        const rotatedContext = rotatedCanvas.getContext('2d');
-                                                        const angle = watermark.rotation * Math.PI / 180;
-                                                        rotatedCanvas.width = imgWidth;
-                                                        rotatedCanvas.height = imgHeight;
+                                                                // Rotation requires canvas manipulation for images
+                                                                const rotatedCanvas = document.createElement('canvas');
+                                                                const rotatedContext = rotatedCanvas.getContext('2d');
+                                                                const angle = watermark.rotation * Math.PI / 180;
+                                                                rotatedCanvas.width = imgWidth;
+                                                                rotatedCanvas.height = imgHeight;
 
-                                                        rotatedContext?.translate(imgWidth / 2, imgHeight / 2);
-                                                        rotatedContext?.rotate(angle);
-                                                        rotatedContext?.drawImage(img, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
+                                                                rotatedContext?.translate(imgWidth / 2, imgHeight / 2);
+                                                                rotatedContext?.rotate(angle);
+                                                                rotatedContext?.drawImage(image, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
 
-                                                        newPdf.addImage(rotatedCanvas.toDataURL(), 'PNG', x, y, imgWidth, imgHeight);
+                                                                newPdf.addImage(rotatedCanvas.toDataURL(), 'PNG', x, y, imgWidth, imgHeight);
+                                                        };
+                                                        image.src = watermark.content;
                                                 }
 
+                                                // @ts-ignore
                                                 newPdf.setGState(new newPdf.GState({ opacity: 1 }));
                                         }
                                 }

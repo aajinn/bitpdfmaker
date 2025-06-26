@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef, Fragment } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type { jsPDF as JsPDFType } from "jspdf";
 import Image from "next/image";
 
