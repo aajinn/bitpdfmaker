@@ -43,6 +43,24 @@
                 <priority>0.8</priority>
         </url>
         <url>
+                <loc>https://bitmakerpdf.com/pdf-metadata-editor</loc>
+                <lastmod>2024-03-19</lastmod>
+                <changefreq>weekly</changefreq>
+                <priority>0.8</priority>
+        </url>
+        <url>
+                <loc>https://bitmakerpdf.com/pdf-comparison</loc>
+                <lastmod>2024-03-19</lastmod>
+                <changefreq>weekly</changefreq>
+                <priority>0.8</priority>
+        </url>
+        <url>
+                <loc>https://bitmakerpdf.com/split-pdf</loc>
+                <lastmod>2024-03-19</lastmod>
+                <changefreq>weekly</changefreq>
+                <priority>0.8</priority>
+        </url>
+        <url>
                 <loc>https://bitmakerpdf.com/about</loc>
                 <lastmod>2024-03-19</lastmod>
                 <changefreq>monthly</changefreq>
