@@ -1,0 +1,53 @@
+Of course. Here is a prompt that could be used to ask an LLM to perform the refactoring task we just completed.
+
+***
+
+### LLM Prompt
+
+**Objective:**
+
+Refactor a Next.js application to display all primary tool components directly on the homepage. Currently, each tool resides on its own separate page. The goal is to extract the core functionality of each tool into a reusable component and then render all these components sequentially on the main page.
+
+**Project Structure Context:**
+
+*   **Homepage:** `app/page.tsx`
+*   **Tool Pages Directory:** `app/(tools)/`
+*   **List of Tools:** Defined in `app/components/ToolList.tsx`
+
+---
+
+**Detailed Instructions:**
+
+**Part 1: Refactor Individual Tool Components**
+
+For each of the tools listed in the "Scope" section below, you must follow this refactoring pattern:
+
+1.  **Create a `Tool.tsx` Component:** In the tool's specific directory (e.g., `app/(tools)/merge-pdf/`), create a new file named `Tool.tsx`.
+2.  **Extract Core Functionality:** Move the essential UI and logic from the tool's `page.tsx` file into the newly created `Tool.tsx`.
+    *   The new `Tool.tsx` component should be self-contained and export the tool's main function (e.g., `export default function MergePdfTool()`).
+    *   **Crucially, do not include page-level layout components like `<Head>`, `<Header>`, or `<ExternalScripts>` in the `Tool.tsx` file.**
+3.  **Update the Original `page.tsx`:** Modify the original `page.tsx` file to remove the code you just extracted. Instead, it should now import the new `Tool` component and render it within the existing page layout. This ensures that navigating directly to the tool's URL (e.g., `/merge-pdf`) still works correctly.
+
+**Part 2: Create a Centralized `AllTools` Component**
+
+1.  **Export the `tools` Array:** Modify `app/components/ToolList.tsx` to `export` the `tools` constant so it can be imported elsewhere.
+2.  **Create `AllTools.tsx`:** Create a new component at `app/components/AllTools.tsx`.
+3.  **Implement `AllTools.tsx`:**
+    *   Import the `tools` array from `ToolList.tsx`.
+    *   Import all the new `Tool.tsx` components you created in Part 1.
+    *   Create a component map (a simple JavaScript object) that associates a tool's `path` (e.g., `'/merge-pdf'`) with its corresponding imported component (e.g., `MergePdfTool`).
+    *   Iterate over the `tools` array. For each tool, use the component map to find and render the correct tool component. Each rendered tool should be wrapped in a `<section>` tag.
+
+**Part 3: Update the Homepage**
+
+1.  **Modify `app/page.tsx`:** Open the homepage file.
+2.  **Replace `ToolList`:** Remove the `<ToolList />` component and replace it with your newly created `<AllTools />` component. Update the imports accordingly.
+
+**Scope:**
+
+Please apply the refactoring pattern described in Part 1 to the following tools:
+
+*   **Merge PDF:** located at `app/(tools)/merge-pdf/`
+*   **PDF Watermark:** located at `app/(tools)/pdf-watermark/`
+*   **PDF to Image:** located at `app/(tools)/pdf-to-image/`
+*   **Extract Text from PDF:** located at `app/(tools)/extract-text-from-pdf/`

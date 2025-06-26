@@ -1,0 +1,101 @@
+Of course. Here is a detailed prompt you can use to ask an LLM to add a new tool to your project, following the established architecture.
+
+***
+
+### LLM Prompt
+
+**Objective:**
+
+Add a new PDF tool, "[Your Tool Name]", to the existing Next.js application. This involves creating the tool's functionality as a self-contained component and integrating it into both its dedicated page and the main homepage.
+
+**New Tool Details:**
+
+*   **Tool Name:** `[Your Tool Name]` (e.g., "Compress PDF")
+*   **URL Path:** `/[your-tool-path]` (e.g., "/compress-pdf")
+*   **Description:** `[A brief, user-facing description of what the tool does]`
+
+---
+
+**Detailed Instructions:**
+
+**Part 1: Create the Tool's Component and Page**
+
+1.  **Create New Directory:** Create a new directory inside `app/(tools)/` named `[your-tool-path]`.
+2.  **Create `Tool.tsx`:** Inside the new directory (`app/(tools)/[your-tool-path]/`), create a file named `Tool.tsx`.
+    *   Implement the core UI and logic for the **[Your Tool Name]** functionality within this file.
+    *   This component must be a "use client" component.
+    *   Export it as the default function (e.g., `export default function YourToolName()`).
+    *   **Crucially, do not include page-level layout components like `<Head>`, `<Header>`, or `<ExternalScripts>` in this file.**
+3.  **Create `page.tsx`:** Inside the same directory, create a `page.tsx` file. This file will serve the dedicated page for your new tool.
+    *   This file should act as a wrapper for your `Tool.tsx` component.
+    *   It must include the necessary page layout elements: `<Head>`, `<Header>`, `<ExternalScripts>`, and a `<main>` section.
+    *   Populate the `<Head>` with relevant and unique SEO metadata (title, description, keywords, canonical link) for the **[Your Tool Name]** tool.
+    *   Import and render the component from `Tool.tsx` within the `<main>` section.
+
+    *Example for `page.tsx`:*
+    ```tsx
+    "use client";
+
+    import Header from "../../components/Header";
+    import ExternalScripts from "../../components/ExternalScripts";
+    import Head from "next/head";
+    import YourToolName from "./Tool"; // Import your new tool component
+
+    export default function YourToolNamePage() {
+            return (
+                    <div className="min-h-screen bg-gray-100">
+                            <Head>
+                                    <title>[Your Tool Name] - Free Online PDF Tool</title>
+                                    <meta name="description" content="[Unique description for your new tool.]" />
+                                    {/* ... other metadata ... */}
+                                    <link rel="canonical" href="https://bitpdfmaker.pro/[your-tool-path]" />
+                            </Head>
+                            <Header />
+                            <ExternalScripts />
+                            <main className="container mx-auto px-4 py-8">
+                                    <div className="max-w-4xl mx-auto">
+                                            <YourToolName />
+                                    </div>
+                            </main>
+                    </div>
+            );
+    }
+    ```
+
+**Part 2: Register and Integrate the New Tool**
+
+1.  **Update Tool List:** Open `app/components/ToolList.tsx`.
+    *   Add a new object to the `tools` array for your new tool.
+    *   Provide the `name`, `description`, `path`, and a new `icon` (SVG).
+
+    *Example entry:*
+    ```tsx
+    // ... inside the tools array
+    {
+        name: "[Your Tool Name]",
+        description: "[A brief, user-facing description of what the tool does]",
+        path: "/[your-tool-path]",
+        icon: (
+            <svg> /* ... your new SVG icon ... */ </svg>
+        ),
+    },
+    ```
+
+2.  **Integrate into Homepage:** Open `app/components/AllTools.tsx`.
+    *   Import your new tool's component from its `Tool.tsx` file.
+    *   Add a new entry to the `toolComponents` map, associating the tool's path with its component.
+
+    *Example changes:*
+    ```tsx
+    // ... other imports
+    import YourToolName from '../(tools)/[your-tool-path]/Tool';
+
+    const toolComponents: { [key: string]: React.ComponentType } = {
+      // ... existing tools
+      '/pdf-to-image': PdfToImageTool,
+      '/extract-text-from-pdf': ExtractTextFromPdfTool,
+      '/[your-tool-path]': YourToolName, // Add your new tool here
+    };
+    ```
+
+After completing these steps, the new tool should be fully integrated, appearing on the homepage and accessible via its dedicated URL.
