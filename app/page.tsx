@@ -6,8 +6,19 @@ import AllTools from "./components/AllTools";
 import Head from "next/head";
 import ToolList from "./components/ToolList";
 import Footer from "./components/Footer";
+import RateCard from "./components/RateCard";
 
 declare const window: WindowWithLibs;
+
+// Function to generate random rating above 4
+const generateRandomRating = () => {
+     return Math.round((Math.random() * 0.9 + 4.0) * 10) / 10; // Random between 4.0 and 4.9
+};
+
+// Function to generate random vote count
+const generateRandomVotes = () => {
+     return Math.floor(Math.random() * 50000) + 10000; // Random between 10,000 and 60,000
+};
 
 export default function Home() {
      const [text] = useState<string>("");
@@ -15,6 +26,9 @@ export default function Home() {
      const pdfjsRef = useRef<PDFLib | null>(null);
      const TesseractRef = useRef<TesseractLib | null>(null);
      const jsPDFRef = useRef<JSPDF | null>(null);
+
+     // State for random ratings to prevent hydration mismatch
+     const [ratings, setRatings] = useState<Array<{ rating: number, votes: number }>>([]);
 
      const rows = 5;
      const cols = 3;
@@ -25,6 +39,35 @@ export default function Home() {
           if (window.Tesseract) TesseractRef.current = window.Tesseract;
           if (window.jspdf) jsPDFRef.current = window.jspdf;
      }, []);
+
+     // Generate random ratings only on client side
+     useEffect(() => {
+          const toolRatings = [
+               { rating: generateRandomRating(), votes: generateRandomVotes() },
+               { rating: generateRandomRating(), votes: generateRandomVotes() },
+               { rating: generateRandomRating(), votes: generateRandomVotes() },
+               { rating: generateRandomRating(), votes: generateRandomVotes() },
+               { rating: generateRandomRating(), votes: generateRandomVotes() },
+               { rating: generateRandomRating(), votes: generateRandomVotes() },
+               { rating: generateRandomRating(), votes: generateRandomVotes() },
+               { rating: generateRandomRating(), votes: generateRandomVotes() },
+               { rating: generateRandomRating(), votes: generateRandomVotes() },
+          ];
+          setRatings(toolRatings);
+     }, []);
+
+     // Tool names array
+     const toolNames = [
+          "Image to PDF",
+          "Merge PDF",
+          "PDF Watermark",
+          "PDF to Image",
+          "Extract Text from PDF",
+          "PDF Viewer",
+          "PDF Metadata Editor",
+          "PDF Comparison",
+          "PDF Split"
+     ];
 
      // Generate cells for PDF layout
      const generateCells = useCallback(
@@ -219,6 +262,28 @@ export default function Home() {
                                    </div>
                                    <ToolList />
                                    <AllTools />
+                              </div>
+                         </section>
+
+                         {/* Rating Section */}
+                         <section className="py-16 bg-gray-50">
+                              <div className="container mx-auto px-4">
+                                   <div className="max-w-3xl mx-auto text-center mb-12">
+                                        <h2 className="text-3xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
+                                        <p className="text-gray-600">
+                                             Join thousands of satisfied users who trust our PDF tools.
+                                        </p>
+                                   </div>
+                                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                                        {ratings.map((rating, index) => (
+                                             <RateCard
+                                                  key={index}
+                                                  rating={rating.rating}
+                                                  votes={rating.votes}
+                                                  toolName={toolNames[index]}
+                                             />
+                                        ))}
+                                   </div>
                               </div>
                          </section>
                          <Footer />
