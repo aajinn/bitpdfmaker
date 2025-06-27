@@ -1,34 +1,41 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
-import type { jsPDF as JsPDFType } from "jspdf";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
+import { loadJsPDF, loadJSZip, loadFileSaver } from "../../components/ExternalScripts";
 
 interface PageThumb {
         pageNumber: number;
         dataUrl: string;
 }
 
+interface JsPDFType {
+        addPage: () => void;
+        addImage: (img: string, format: string, x: number, y: number, w: number, h: number) => void;
+        output: (type: string) => Blob;
+        internal: { pageSize: { getWidth: () => number; getHeight: () => number } };
+}
+
 export default function Tool() {
         const [file, setFile] = useState<File | null>(null);
-        const [loading, setLoading] = useState(false);
-        const [error, setError] = useState("");
-        const [progress, setProgress] = useState("");
-        const [isPdfJsLoaded, setIsPdfJsLoaded] = useState(false);
         const [numPages, setNumPages] = useState<number | null>(null);
         const [selectedPages, setSelectedPages] = useState<number[]>([]);
         const [splits, setSplits] = useState<number[][]>([]);
         const [splitBlobs, setSplitBlobs] = useState<{ name: string; blob: Blob }[]>([]);
-        const [zipping, setZipping] = useState(false);
-        const fileInputRef = useRef<HTMLInputElement>(null);
         const [pageThumbs, setPageThumbs] = useState<PageThumb[]>([]);
+        const [loading, setLoading] = useState(false);
+        const [zipping, setZipping] = useState(false);
+        const [error, setError] = useState("");
+        const [progress, setProgress] = useState("");
+        const [isPdfJsLoaded, setIsPdfJsLoaded] = useState(false);
+        const fileInputRef = useRef<HTMLInputElement>(null);
         const canvasRef = useRef<HTMLCanvasElement>(null);
         const splitsListRef = useRef<HTMLDivElement>(null);
         const downloadBoxRef = useRef<HTMLDivElement>(null);
 
         useEffect(() => {
                 const checkPdfJsLoaded = () => {
-                        if (window.pdfjsLib && window.jspdf) {
+                        if (window.pdfjsLib) {
                                 setIsPdfJsLoaded(true);
                         } else {
                                 setTimeout(checkPdfJsLoaded, 100);
@@ -135,9 +142,14 @@ export default function Tool() {
                 }
                 setLoading(true);
                 setError("");
-                setProgress("Splitting PDF...");
+                setProgress("Loading PDF libraries...");
                 setSplitBlobs([]);
+
                 try {
+                        // Dynamically load jsPDF
+                        await loadJsPDF();
+
+                        setProgress("Splitting PDF...");
                         const reader = new FileReader();
                         reader.onload = async () => {
                                 try {
@@ -147,7 +159,7 @@ export default function Tool() {
                                         for (let i = 0; i < splits.length; i++) {
                                                 setProgress(`Processing split ${i + 1} of ${splits.length}...`);
                                                 const pages = splits[i];
-                                                const doc = new window.jspdf.jsPDF() as JsPDFType;
+                                                const doc = new window.jspdf.jsPDF() as unknown as JsPDFType;
                                                 for (let j = 0; j < pages.length; j++) {
                                                         const p = pages[j];
                                                         const page = await pdfDoc.getPage(p);
@@ -184,18 +196,24 @@ export default function Tool() {
         }, [file, isPdfJsLoaded, numPages, splits]);
 
         const handleDownloadZip = async () => {
-                const win = window as unknown as { JSZip: new () => { file: (name: string, blob: Blob) => void; generateAsync: (opts: { type: string }) => Promise<Blob>; }; saveAs: (blob: Blob, name: string) => void };
-                if (!splitBlobs.length || !win.JSZip || !win.saveAs) return;
                 setZipping(true);
                 try {
-                        const zip = new win.JSZip();
+                        // Dynamically load JSZip and FileSaver
+                        await loadJSZip();
+                        await loadFileSaver();
+
+                        if (!window.JSZip || !('saveAs' in window)) {
+                                throw new Error("Failed to load required libraries");
+                        }
+
+                        const zip = new window.JSZip();
                         splitBlobs.forEach(({ name, blob }) => {
                                 zip.file(name, blob);
                         });
                         const content = await zip.generateAsync({ type: "blob" });
-                        win.saveAs(content, "split-pdfs.zip");
-                } catch {
-                        setError("Failed to create ZIP file.");
+                        (window as { saveAs: (blob: Blob, filename: string) => void }).saveAs(content, "split-pdfs.zip");
+                } catch (error) {
+                        setError("Failed to create ZIP file: " + (error instanceof Error ? error.message : ""));
                 } finally {
                         setZipping(false);
                 }

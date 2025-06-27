@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { loadJsPDF } from "../../components/ExternalScripts";
 
 interface PDFMetadata {
         title: string;
@@ -59,6 +60,9 @@ export default function PdfMetadataEditorTool() {
                 if (!pdfFile) return;
                 setIsLoading(true);
                 try {
+                        // Dynamically load jsPDF
+                        await loadJsPDF();
+
                         // jsPDF is loaded from CDN and not typed
                         const { jsPDF } = window.jspdf;
                         const arrayBuffer = await pdfFile.arrayBuffer();

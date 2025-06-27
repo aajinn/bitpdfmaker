@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useState, useRef, DragEvent, useCallback, memo } from "react";
+import { loadJsPDF } from "../../components/ExternalScripts";
 
 interface PDFFile {
         file: File;
@@ -128,6 +129,9 @@ export default function MergePdfTool() {
                 setIsConverting(true);
 
                 try {
+                        // Dynamically load jsPDF
+                        await loadJsPDF();
+
                         const { jsPDF } = window.jspdf;
                         const mergedPdf = new jsPDF();
                         const batchSize = 3; // Process 3 PDFs at a time

@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import JSZip from "jszip";
-import { saveAs } from "file-saver";
 import Image from "next/image";
 import { PDFPageProxy } from "pdfjs-dist";
+import { loadJSZip, loadFileSaver } from "../../components/ExternalScripts";
 
 interface PageImage {
         pageNumber: number;
@@ -104,7 +103,16 @@ export default function PdfToImageTool() {
 
                 try {
                         setLoading(true);
-                        const zip = new JSZip();
+
+                        // Dynamically load JSZip and FileSaver
+                        await loadJSZip();
+                        await loadFileSaver();
+
+                        if (!window.JSZip || !('saveAs' in window)) {
+                                throw new Error("Failed to load required libraries");
+                        }
+
+                        const zip = new window.JSZip();
 
                         for (const pageNumber of selectedPages) {
                                 const image = pageImages.find(img => img.pageNumber === pageNumber);
@@ -114,7 +122,7 @@ export default function PdfToImageTool() {
                         }
 
                         const content = await zip.generateAsync({ type: 'blob' });
-                        saveAs(content, 'pdf-images.zip');
+                        (window as { saveAs: (blob: Blob, filename: string) => void }).saveAs(content, 'pdf-images.zip');
                 } catch (err) {
                         setError('Error creating zip file: ' + (err instanceof Error ? err.message : String(err)));
                 } finally {

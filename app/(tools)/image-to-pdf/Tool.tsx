@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { loadJsPDF } from "../../components/ExternalScripts";
 
 interface ImageFile {
         file: File;
@@ -63,6 +64,9 @@ export default function Tool() {
                 setProgress(0);
 
                 try {
+                        // Dynamically load jsPDF
+                        await loadJsPDF();
+
                         const { jsPDF } = window.jspdf;
                         const pdf = new jsPDF();
                         let isFirstPage = true;

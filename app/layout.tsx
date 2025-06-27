@@ -49,12 +49,6 @@ export default function RootLayout({
 }) {
      return (
           <html lang="en" className="h-full">
-               <head>
-                    <script
-                         src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
-                         defer
-                    ></script>
-               </head>
                <body className={`${inter.className} h-full min-h-screen flex flex-col`}>
                     <ExternalScripts />
                     {children}
