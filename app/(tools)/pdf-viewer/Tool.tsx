@@ -151,6 +151,7 @@ export default function PdfViewerTool() {
                                                 </span>
                                         </div>
                                         <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full max-w-2xl">
+                                                <h2 className="sr-only">Features</h2>
                                                 <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
                                                         <h3 className="font-semibold text-gray-900 text-sm sm:text-base mb-1 sm:mb-2">Zoom Control</h3>
                                                         <p className="text-xs sm:text-sm text-gray-600">Pinch to zoom or use the zoom controls</p>
