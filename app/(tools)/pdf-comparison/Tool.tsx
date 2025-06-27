@@ -189,7 +189,7 @@ export default function PdfComparisonTool() {
                                 <div className="flex-1 bg-gray-50 border rounded p-2 min-h-[400px] flex flex-col items-center">
                                         <span className="font-semibold mb-2">PDF A Preview</span>
                                         {loadingA ? (
-                                                <div className="w-full h-96 flex items-center justify-center text-gray-400">Loading...</div>
+                                                <div className="w-full h-96 flex items-center justify-center text-gray-600">Loading...</div>
                                         ) : errorA ? (
                                                 <div className="w-full h-96 flex items-center justify-center text-red-500">{errorA}</div>
                                         ) : (
@@ -199,7 +199,7 @@ export default function PdfComparisonTool() {
                                 <div className="flex-1 bg-gray-50 border rounded p-2 min-h-[400px] flex flex-col items-center">
                                         <span className="font-semibold mb-2">PDF B Preview</span>
                                         {loadingB ? (
-                                                <div className="w-full h-96 flex items-center justify-center text-gray-400">Loading...</div>
+                                                <div className="w-full h-96 flex items-center justify-center text-gray-600">Loading...</div>
                                         ) : errorB ? (
                                                 <div className="w-full h-96 flex items-center justify-center text-red-500">{errorB}</div>
                                         ) : (

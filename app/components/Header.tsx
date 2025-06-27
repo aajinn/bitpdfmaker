@@ -9,8 +9,8 @@ export default function Header() {
      return (
           <header className="w-full max-w-5xl mb-4 md:mb-6 mx-auto px-4">
                <div className="flex flex-col items-center">
-                    <h1 className="text-2xl md:text-3xl font-bold text-center text-yellow-400">
-                         <span className="text-green-500">Bit</span>Maker
+                    <h1 className="text-2xl md:text-3xl font-bold text-center text-yellow-600">
+                         <span className="text-green-700">Bit</span>Maker
                          <span className="text-red-600">Pdf</span>
                     </h1>
 
