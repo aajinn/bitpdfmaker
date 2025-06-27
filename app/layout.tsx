@@ -7,26 +7,26 @@ import ExternalScripts from "./components/ExternalScripts";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-     title: "BitMakerPdf - PDF Tools",
+     title: "BitPDFMaker - PDF Tools",
      description: "A collection of useful PDF tools for your daily needs",
      keywords: ["PDF", "tools", "converter", "viewer", "editor"],
-     authors: [{ name: "BitMakerPdf Team" }],
-     creator: "BitMakerPdf",
-     publisher: "BitMakerPdf",
+     authors: [{ name: "BitPDFMaker Team" }],
+     creator: "BitPDFMaker",
+     publisher: "BitPDFMaker",
      robots: "index, follow",
      openGraph: {
           type: "website",
           locale: "en_US",
-          url: "https://bitmakerpdf.com",
-          title: "BitMakerPdf - PDF Tools",
+          url: "https://bitpdfmaker.pro",
+          title: "BitPDFMaker - PDF Tools",
           description: "A collection of useful PDF tools for your daily needs",
-          siteName: "BitMakerPdf",
+          siteName: "BitPDFMaker",
      },
      twitter: {
           card: "summary_large_image",
-          title: "BitMakerPdf - PDF Tools",
+          title: "BitPDFMaker - PDF Tools",
           description: "A collection of useful PDF tools for your daily needs",
-          creator: "@bitmakerpdf",
+          creator: "@bitpdfmaker",
      },
      icons: {
           icon: "/favicon.ico",

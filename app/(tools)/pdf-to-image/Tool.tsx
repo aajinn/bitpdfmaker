@@ -30,7 +30,7 @@ export default function PdfToImageTool() {
                         // Automatically start processing when file is selected
                         processPDF(selectedFile);
                 } else {
-                        setError('Please select a valid PDF file');
+                       setError('Please select a valid PDF file');
                 }
         };
 
