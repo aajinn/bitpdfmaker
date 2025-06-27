@@ -13,7 +13,7 @@ export default function MergePDF() {
                                 <meta name="description" content="Merge multiple PDF files into one document online for free. No registration required. Fast, secure, and easy to use PDF merger tool with drag & drop support." />
                                 <meta name="keywords" content="merge pdf, combine pdf, pdf merger, free pdf tool, pdf combiner, merge pdf online, combine pdf files, pdf joiner, merge multiple pdfs" />
                                 <meta name="robots" content="index, follow, max-image-preview:large" />
-                                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
                                 <meta name="author" content="BitPDFMaker" />
                                 <meta name="application-name" content="BitPDFMaker" />
 

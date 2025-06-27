@@ -14,7 +14,7 @@ export default function PDFComparison() {
                                 <meta name="description" content="Compare two PDF files side by side, highlight differences, and track changes. Free online PDF comparison tool by BitPDFMaker." />
                                 <meta name="keywords" content="compare pdf, pdf diff, pdf comparison, highlight pdf differences, pdf change tracking, free pdf tool" />
                                 <meta name="robots" content="index, follow, max-image-preview:large" />
-                                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
                                 <meta name="author" content="BitPDFMaker" />
                                 <meta name="application-name" content="BitPDFMaker" />
                                 {/* Open Graph */}

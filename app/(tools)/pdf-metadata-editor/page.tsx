@@ -14,7 +14,7 @@ export default function PDFMetadataEditor() {
                                 <meta name="description" content="Edit PDF metadata properties like title, author, keywords, and more online for free. No registration required. Fast, secure, and easy to use PDF metadata editor tool." />
                                 <meta name="keywords" content="edit pdf metadata, pdf properties, pdf info, pdf title, pdf author, pdf keywords, pdf editor, free pdf tool, pdf metadata editor" />
                                 <meta name="robots" content="index, follow, max-image-preview:large" />
-                                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
                                 <meta name="author" content="BitPDFMaker" />
                                 <meta name="application-name" content="BitPDFMaker" />
                                 {/* Open Graph */}
