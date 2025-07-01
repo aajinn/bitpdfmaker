@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { loadJsPDF, loadPdfLib } from "./ExternalScripts";
+import { loadPdfLib } from "./ExternalScripts";
 import ReactDOM from "react-dom";
+import { jsPDF } from 'jspdf';
 
 interface PdfEditorProps {
-        onSave?: (pdfBlob: Blob) => void;
         className?: string;
 }
 
@@ -41,7 +41,7 @@ const DEFAULT_COLOR = "#000000";
 const PAGE_WIDTH = 595; // A4 width in points
 const PAGE_HEIGHT = 842; // A4 height in points
 
-export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
+export default function PdfEditor({ className = "" }: PdfEditorProps) {
         const [pages, setPages] = useState<PageData[]>([
                 { id: "1", pageNumber: 1, textElements: [] }
         ]);
@@ -61,7 +61,6 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
 
         const canvasRef = useRef<HTMLCanvasElement>(null);
         const fileInputRef = useRef<HTMLInputElement>(null);
-        const textInputRef = useRef<HTMLInputElement>(null);
 
         const currentPageData = pages.find(page => page.pageNumber === currentPage);
 
@@ -99,7 +98,7 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
                                         ctx.fillRect(0, 0, width, height);
                                         resolve();
                                 };
-                                img.src = pageData.background;
+                                img.src = pageData.background ?? "";
                         });
                 } else {
                         ctx.fillStyle = '#ffffff';
@@ -277,11 +276,11 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
                 if (clickedElement) {
                         // Select clicked element
                         setSelectedElement(clickedElement);
-                        setTextInput(clickedElement.text);
-                        setFontSize(clickedElement.fontSize);
-                        setFontFamily(clickedElement.fontFamily);
-                        setTextColor(clickedElement.color);
-                        setAlignment(clickedElement.alignment);
+                        setTextInput(clickedElement.text ?? '');
+                        setFontSize(clickedElement.fontSize ?? DEFAULT_FONT_SIZE);
+                        setFontFamily(clickedElement.fontFamily ?? DEFAULT_FONT_FAMILY);
+                        setTextColor(clickedElement.color ?? DEFAULT_COLOR);
+                        setAlignment(clickedElement.alignment ?? 'left');
 
                         setPages(prev => prev.map(page => ({
                                 ...page,
@@ -331,57 +330,6 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
         }, []);
 
         // Text editing functions
-        const addTextElement = useCallback(() => {
-                if (!textInput.trim() || !currentPageData) return;
-
-                const canvas = canvasRef.current;
-                if (!canvas) return;
-
-                const ctx = canvas.getContext('2d');
-                if (!ctx) return;
-
-                ctx.font = `${fontSize}px ${fontFamily}`;
-                const metrics = ctx.measureText(textInput);
-                const width = metrics.width;
-                const height = fontSize;
-
-                const newElement: TextElement = {
-                        id: Date.now().toString(),
-                        text: textInput,
-                        x: 50,
-                        y: 100,
-                        fontSize,
-                        fontFamily: fontFamily || DEFAULT_FONT_FAMILY,
-                        color: textColor,
-                        alignment,
-                        isSelected: true,
-                        width,
-                        height,
-                        fontWeight: 'normal',
-                        fontStyle: 'normal',
-                        textDecoration: 'none'
-                };
-
-                // Deselect all other elements
-                setPages(prev => prev.map(page => ({
-                        ...page,
-                        textElements: page.textElements.map(element => ({
-                                ...element,
-                                isSelected: false
-                        }))
-                })));
-
-                // Add new element
-                setPages(prev => prev.map(page =>
-                        page.pageNumber === currentPage
-                                ? { ...page, textElements: [...page.textElements, newElement] }
-                                : page
-                ));
-
-                setSelectedElement(newElement);
-                setTextInput("");
-        }, [textInput, fontSize, fontFamily, textColor, alignment, currentPageData, currentPage]);
-
         const updateSelectedElement = useCallback(() => {
                 if (!selectedElement || !textInput.trim()) return;
 
@@ -439,16 +387,6 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
                 setCurrentPage(newPageNumber);
         }, [pages.length]);
 
-        const removePage = useCallback((pageId: string) => {
-                if (pages.length <= 1) {
-                        setError("Cannot remove the last page");
-                        return;
-                }
-                setPages(prev => prev.filter(page => page.id !== pageId));
-                setCurrentPage(1);
-                setError(null);
-        }, [pages.length]);
-
         // PDF operations
         const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
                 const file = e.target.files?.[0];
@@ -490,12 +428,10 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
                                 // Extract text elements to overlay
                                 const textContent = await page.getTextContent();
                                 const textElements: TextElement[] = [];
-                                const rendererViewport = page.getViewport({ scale: 1.0 });
 
-                                textContent.items.forEach((item: any, index: number) => {
+                                (textContent.items as Array<{ str: string; transform: number[]; width: number; height: number; fontName: string }>).forEach((item, index) => {
                                         if (item.str && item.str.trim()) {
-                                                let tx = item.transform;
-
+                                                const tx = item.transform;
                                                 const style = textContent.styles[item.fontName];
                                                 // Ascent and descent are fractions of font size.
                                                 // Default values are heuristics if not available in style.
@@ -619,18 +555,7 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
                 setError(null);
 
                 try {
-                        await loadJsPDF();
-                        const { jsPDF } = window.jspdf;
-
-                        if (!jsPDF) {
-                                throw new Error('jsPDF library not loaded');
-                        }
-
-                        const pdf = new jsPDF({
-                                orientation: 'portrait',
-                                unit: 'pt',
-                                format: 'a4'
-                        });
+                        const pdf = new jsPDF();
 
                         const SCALE_FACTOR = 3; // Increase for higher quality output
 
@@ -654,20 +579,13 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
 
                                 const imageData = tempCanvas.toDataURL('image/png');
 
-                                pdf.addImage(imageData, 'PNG', 0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+                                pdf.addImage(imageData as unknown as HTMLImageElement, 'PNG', 0, 0, PAGE_WIDTH, PAGE_HEIGHT);
                                 console.log(`Added page ${pageIndex + 1} as image to PDF.`);
                         }
 
                         // Generate and save PDF
                         console.log('Generating PDF blob...');
-                        const pdfBlob = pdf.output('blob');
-                        console.log('PDF blob generated, size:', pdfBlob.size);
-
-                        onSave?.(pdfBlob);
-                        if (!onSave) {
-                                pdf.save('edited-document.pdf');
-                        }
-
+                        pdf.save('edited-document.pdf');
                         console.log('PDF saved successfully');
                         setError(null); // Clear any previous errors
                 } catch (err) {
@@ -677,7 +595,7 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
                 } finally {
                         setIsLoading(false);
                 }
-        }, [pages, onSave, drawPageContents]);
+        }, [pages, drawPageContents]);
 
         // Keyboard shortcuts
         useEffect(() => {
@@ -769,16 +687,26 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
                                 <PopupEditor
                                         element={selectedElement}
                                         onChange={({ text, fontSize, fontFamily, color, alignment, fontWeight, fontStyle, textDecoration }) => {
-                                                setTextInput(text);
-                                                setFontSize(fontSize);
-                                                setFontFamily(fontFamily);
-                                                setTextColor(color);
-                                                setAlignment(alignment);
+                                                setTextInput(text ?? '');
+                                                setFontSize(fontSize ?? DEFAULT_FONT_SIZE);
+                                                setFontFamily(fontFamily ?? DEFAULT_FONT_FAMILY);
+                                                setTextColor(color ?? DEFAULT_COLOR);
+                                                setAlignment(alignment ?? 'left');
                                                 setPages(prev => prev.map(page => ({
                                                         ...page,
                                                         textElements: page.textElements.map(el =>
                                                                 el.id === selectedElement.id
-                                                                        ? { ...el, text, fontSize, fontFamily, color, alignment, fontWeight, fontStyle, textDecoration }
+                                                                        ? {
+                                                                                ...el,
+                                                                                text: text ?? '',
+                                                                                fontSize: fontSize ?? DEFAULT_FONT_SIZE,
+                                                                                fontFamily: fontFamily ?? DEFAULT_FONT_FAMILY,
+                                                                                color: color ?? DEFAULT_COLOR,
+                                                                                alignment: alignment ?? 'left',
+                                                                                fontWeight: fontWeight ?? 'normal',
+                                                                                fontStyle: fontStyle ?? 'normal',
+                                                                                textDecoration: textDecoration ?? 'none',
+                                                                        }
                                                                         : el
                                                         )
                                                 })));
@@ -867,7 +795,7 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
                                         <div className="flex gap-4">
                                                 {selectedElement && (
                                                         <>
-                                                                <span>Selected: "{selectedElement.text}"</span>
+                                                                <span>Selected: &quot;{selectedElement.text}&quot;</span>
                                                                 <span>Position: ({Math.round(selectedElement.x)}, {Math.round(selectedElement.y)})</span>
                                                                 <span>Size: {selectedElement.fontSize}px</span>
                                                         </>
@@ -885,12 +813,12 @@ export default function PdfEditor({ onSave, className = "" }: PdfEditorProps) {
                         <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                                 <h3 className="text-lg font-semibold text-blue-900 mb-2">How to Use:</h3>
                                 <ul className="text-sm text-blue-800 space-y-1">
-                                        <li>• Enter text in the input field and click "Add Text" to place it on the page</li>
+                                        <li>• Enter text in the input field and click &quot;Add Text&quot; to place it on the page</li>
                                         <li>• Click on any text element to select and edit it</li>
                                         <li>• Drag selected text elements to reposition them</li>
                                         <li>• Use the formatting controls to change font size, family, color, and alignment</li>
-                                        <li>• Click "Update Text" to apply changes to selected text</li>
-                                        <li>• Click "Delete Text" to remove selected text elements</li>
+                                        <li>• Click &quot;Update Text&quot; to apply changes to selected text</li>
+                                        <li>• Click &quot;Delete Text&quot; to remove selected text elements</li>
                                 </ul>
                         </div>
                 </div>
@@ -905,8 +833,8 @@ function PopupEditor({
         onDelete,
         onCancel
 }: {
-        element: any,
-        onChange: (fields: any) => void,
+        element: TextElement,
+        onChange: (fields: Partial<TextElement>) => void,
         onUpdate: () => void,
         onDelete: () => void,
         onCancel: () => void
@@ -923,14 +851,14 @@ function PopupEditor({
         // Update parent on any change
         useEffect(() => {
                 onChange({
-                        text: localText,
-                        fontSize: localFontSize,
-                        fontFamily: localFontFamily,
-                        color: localColor,
-                        alignment: localAlignment,
-                        fontWeight: bold ? "bold" : "normal",
-                        fontStyle: italic ? "italic" : "normal",
-                        textDecoration: underline ? "underline" : "none"
+                        text: localText ?? '',
+                        fontSize: localFontSize ?? 16,
+                        fontFamily: localFontFamily ?? 'Arial',
+                        color: localColor ?? '#000000',
+                        alignment: localAlignment ?? 'left',
+                        fontWeight: bold ? 'bold' : 'normal',
+                        fontStyle: italic ? 'italic' : 'normal',
+                        textDecoration: underline ? 'underline' : 'none',
                 });
                 // eslint-disable-next-line
         }, [localText, localFontSize, localFontFamily, localColor, localAlignment, bold, italic, underline]);

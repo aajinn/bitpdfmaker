@@ -121,12 +121,12 @@ export default function PDFEditorPage() {
                                                         <div>
                                                                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Getting Started</h3>
                                                                 <ol className="list-decimal list-inside space-y-2 text-gray-600">
-                                                                        <li>Click "Load PDF" to upload an existing PDF file (optional)</li>
-                                                                        <li>Enter text in the input field and click "Add Text" to place it on the page</li>
+                                                                        <li>Click &quot;Load PDF&quot; to upload an existing PDF file (optional)</li>
+                                                                        <li>Enter text in the input field and click &quot;Add Text&quot; to place it on the page</li>
                                                                         <li>Click on any text element to select and edit it</li>
                                                                         <li>Drag selected text elements to reposition them</li>
                                                                         <li>Use the formatting controls to change appearance</li>
-                                                                        <li>Click "Save PDF" to download your edited document</li>
+                                                                        <li>Click &quot;Save PDF&quot; to download your edited document</li>
                                                                 </ol>
                                                         </div>
                                                         <div>

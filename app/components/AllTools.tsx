@@ -10,6 +10,7 @@ import PdfMetadataEditorTool from '../(tools)/pdf-metadata-editor/Tool';
 import PdfComparisonTool from '../(tools)/pdf-comparison/Tool';
 import SplitPdfTool from '../(tools)/split-pdf/Tool';
 import ImageToPdfTool from '../(tools)/image-to-pdf/Tool';
+import PdfEditor from './PdfEditor';
 
 const toolComponents: { [key: string]: React.ComponentType } = {
         '/image-to-pdf': ImageToPdfTool,
@@ -21,6 +22,7 @@ const toolComponents: { [key: string]: React.ComponentType } = {
         '/pdf-metadata-editor': PdfMetadataEditorTool,
         '/pdf-comparison': PdfComparisonTool,
         '/split-pdf': SplitPdfTool,
+        '/pdf-editor': PdfEditor,
 };
 
 export default function AllTools() {
@@ -33,7 +35,10 @@ export default function AllTools() {
                                                 <div className="container mx-auto px-4">
                                                         <div className="max-w-4xl mx-auto">
                                                                 {ToolComponent ? (
-                                                                        <ToolComponent />
+                                                                        <>
+                                                                                <h2 className="text-2xl font-bold text-gray-900 mb-4">{tool.name}</h2>
+                                                                                <ToolComponent />
+                                                                        </>
                                                                 ) : (
                                                                         <div className="bg-white rounded-lg shadow-md p-6">
                                                                                 <h2 className="text-2xl font-bold text-gray-900 mb-2">{tool.name}</h2>
