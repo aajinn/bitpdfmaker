@@ -67,4 +67,9 @@ export const loadJSZip = async (): Promise<void> => {
 export const loadFileSaver = async (): Promise<void> => {
         if ('saveAs' in window) return;
         await loadScript("https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js");
+};
+
+export const loadPdfLib = async (): Promise<void> => {
+        if (window.PDFLib) return;
+        await loadScript("https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js");
 }; 
