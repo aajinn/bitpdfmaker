@@ -250,6 +250,47 @@ export default function Home() {
                               </div>
                          </section>
 
+                         {/* How It Works Section */}
+                         <section id="how-it-works" className="py-16 bg-white">
+                              <div className="container mx-auto px-4">
+                                   <div className="max-w-3xl mx-auto text-center mb-12">
+                                        <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
+                                        <p className="text-gray-600">
+                                             Get started with our PDF tools in just a few simple steps.
+                                        </p>
+                                   </div>
+                                   <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+                                        <div className="flex flex-col items-center">
+                                             <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                             </div>
+                                             <h3 className="text-lg font-semibold text-gray-900 mb-2">1. Choose a Tool</h3>
+                                             <p className="text-gray-600 text-center">Select the PDF tool you need from our collection.</p>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                             <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0l-4 4m4-4l4 4" /></svg>
+                                             </div>
+                                             <h3 className="text-lg font-semibold text-gray-900 mb-2">2. Upload Your File</h3>
+                                             <p className="text-gray-600 text-center">Upload your PDF or image file securely. No data is stored.</p>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                             <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" /></svg>
+                                             </div>
+                                             <h3 className="text-lg font-semibold text-gray-900 mb-2">3. Process Instantly</h3>
+                                             <p className="text-gray-600 text-center">Let our tool process your file instantly in your browser.</p>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                             <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                             </div>
+                                             <h3 className="text-lg font-semibold text-gray-900 mb-2">4. Download & Done</h3>
+                                             <p className="text-gray-600 text-center">Download your processed PDF or image. No sign-up required.</p>
+                                        </div>
+                                   </div>
+                              </div>
+                         </section>
 
                          {/* Tools Section */}
                          <section id="tools" className="py-16 bg-white">
